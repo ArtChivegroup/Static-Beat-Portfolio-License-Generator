@@ -464,6 +464,33 @@ div[id^='kofi-widget-'] .kofi-button:hover { background-color: var(--brand-orang
 #license-form .form-actions { margin-top: 2.5em; text-align: center; }
 .error-message { font-size: 0.9em; font-weight: bold; text-align: center; color: #ff6b6b; margin-top: 10px; }
 
+/* Tambahkan gaya untuk button */
+.button-86 {
+    display: inline-block;
+    padding: 12px 24px;
+    font-size: 1em;
+    font-weight: bold;
+    color: #fff;
+    background: linear-gradient(90deg, #ff7e5f, #feb47b);
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    text-align: center;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 10px rgba(255, 126, 95, 0.3);
+}
+
+.button-86:hover {
+    background: linear-gradient(90deg, #feb47b, #ff7e5f);
+    box-shadow: 0 8px 15px rgba(255, 126, 95, 0.5);
+    transform: translateY(-2px);
+}
+
+.button-86:active {
+    transform: translateY(1px);
+    box-shadow: 0 4px 10px rgba(255, 126, 95, 0.3);
+}
 
 /* Responsive Adjustments */
 @media (max-width: 768px) {
