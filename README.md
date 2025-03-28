@@ -52,7 +52,7 @@ This project provides a clean, modern interface for artists and producers (like 
 
 1.  **Clone or Download:** Get the project files.
     ```bash
-    git clone https://github.com/your-username/Static-Beat-Portfolio-License-Generator.git
+    git clone https://github.com/ArtChivegroup/Static-Beat-Portfolio-License-Generator.git
     cd Static-Beat-Portfolio-License-Generator
     ```
 2.  **Customize:** Modify the content, styles, and settings (see Customization section below).
