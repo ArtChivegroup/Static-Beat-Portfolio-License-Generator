@@ -1,0 +1,507 @@
+/* START OF FILE style.css */
+
+/* Basic Reset */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+/* Variables */
+:root {
+    --bg-color-start: #1a1a1a;
+    --bg-color-end: #0f0f0f;
+    --surface-color: #1e1e1e;
+    --glass-bg: rgba(30, 30, 30, 0.75);
+    --glass-border: rgba(255, 255, 255, 0.12);
+    --glass-shadow: rgba(0, 0, 0, 0.35);
+    --text-primary: #f5f5f5;
+    --text-secondary: #b0b0b0;
+    --text-muted: #888888;
+    --brand-orange: #FFA500;
+    --brand-orange-darker: #FF8C00;
+    --brand-orange-glow: rgba(255, 165, 0, 0.35);
+    --brand-green: #28a745; /* Added for purchase button */
+    --brand-green-darker: #218838; /* Added for purchase button */
+    --brand-green-glow: rgba(40, 167, 69, 0.35); /* Added for purchase button */
+    --shadow-color-light: rgba(0, 0, 0, 0.2);
+    --shadow-color-strong: rgba(0, 0, 0, 0.45);
+}
+
+/* Body Styling */
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+    line-height: 1.6;
+    color: var(--text-primary);
+    padding: 10px;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    min-height: 100vh;
+    background-color: #0a0a0a;
+    background-image:
+        linear-gradient(rgba(10, 10, 10, 0.75), rgba(10, 10, 10, 0.75)), /* Darker overlay */
+        url('img/background.jpg');
+    background-size: cover;
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+}
+
+body.modal-open {
+    overflow: hidden;
+}
+
+/* Container */
+.container {
+    max-width: 1200px;
+    margin: 30px auto;
+    padding: 25px;
+}
+
+/* Header */
+.main-header {
+    text-align: left;
+    margin-bottom: 1.5em;
+    padding-bottom: 1.5em;
+    border-bottom: 2px solid var(--brand-orange);
+}
+.main-header h1 {
+    font-size: 2.3em;
+    margin-bottom: 0.2em;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+.main-header .subtitle {
+    font-size: 1.15em;
+    color: var(--text-secondary);
+}
+
+/* --- Home Action Button Container --- */
+.home-action-button-container {
+    text-align: center;
+    margin-bottom: 0.5em; /* Reduced margin */
+    padding: 1em 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+/* Target the paragraph immediately following the container */
+p.small-info.home-info { /* More specific selector */
+    font-size: 0.85em;
+    color: var(--text-muted);
+    margin-top: 0.5em; /* Adjusted top margin */
+    margin-bottom: 3em; /* Add margin below text */
+    text-align: center;
+    width: 100%; /* Ensure it takes full width */
+}
+
+/* Portfolio Grid */
+.portfolio-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+    gap: 35px;
+}
+.grid-item {
+    background-color: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: 16px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: all 0.35s cubic-bezier(0.25, 0.8, 0.25, 1);
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 6px 22px var(--glass-shadow);
+    -webkit-backdrop-filter: blur(14px);
+    backdrop-filter: blur(14px);
+    position: relative;
+}
+.grid-item:hover {
+    box-shadow: 0 12px 40px var(--shadow-color-strong), 0 0 18px var(--brand-orange-glow);
+    transform: translateY(-7px) scale(1.035);
+    border-color: var(--brand-orange);
+}
+.grid-item img {
+    display: block;
+    width: 100%;
+    height: 210px;
+    object-fit: cover;
+    position: relative;
+    z-index: 0;
+}
+.grid-item h4 {
+    font-size: 1.05em;
+    font-weight: 600;
+    padding: 20px 22px;
+    color: var(--text-primary);
+    line-height: 1.4;
+    margin: 0;
+    flex-grow: 1;
+    display: flex;
+    align-items: center;
+    position: relative;
+    z-index: 2;
+    transition: color 0.3s ease;
+}
+.grid-item:hover h4 {
+    color: var(--brand-orange);
+}
+
+
+/* Footer */
+footer {
+    text-align: center;
+    margin-top: 5em;
+    padding-top: 2.5em;
+    border-top: 1px solid var(--glass-border);
+    font-size: 0.9em;
+    color: var(--text-muted);
+}
+
+/* Modal Styles */
+.modal {
+    position: fixed; inset: 0; display: none;
+    align-items: center; justify-content: center; z-index: 1000;
+}
+.modal.is-visible { display: flex; animation: fadeIn 0.3s ease-out forwards; }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+.modal-overlay {
+    position: absolute; inset: 0;
+    background-color: rgba(0, 0, 0, 0.9); cursor: pointer; z-index: 1001;
+    -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
+}
+.modal-content {
+    position: relative;
+    background-color: rgba(35, 35, 35, 0.9);
+    padding: 35px;
+    border-radius: 16px;
+    max-width: 850px; width: 90%; max-height: 90vh;
+    overflow-y: auto; z-index: 1002;
+    box-shadow: 0 15px 50px var(--shadow-color-strong);
+    border: 1px solid var(--glass-border);
+    border-top: 3px solid var(--brand-orange);
+    -webkit-backdrop-filter: blur(18px); backdrop-filter: blur(18px);
+    opacity: 0; transform: scale(0.95) translateY(10px);
+    animation: modalEnter 0.4s 0.1s cubic-bezier(0.165, 0.84, 0.44, 1) forwards;
+}
+@keyframes modalEnter { from { opacity: 0; transform: scale(0.95) translateY(10px); } to { opacity: 1; transform: scale(1) translateY(0); } }
+
+.modal-close {
+    position: absolute; top: 18px; right: 18px;
+    font-size: 1.8em; font-weight: 300; line-height: 1;
+    color: var(--text-secondary); background: rgba(0,0,0,0.3);
+    border: 1px solid var(--glass-border); border-radius: 50%;
+    width: 38px; height: 38px;
+    cursor: pointer; padding: 0; display: flex;
+    align-items: center; justify-content: center;
+    transition: all 0.25s ease-out;
+}
+.modal-close:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: var(--text-primary);
+    transform: rotate(90deg) scale(1.05);
+    border-color: rgba(255, 255, 255, 0.3);
+}
+.modal-content h2 {
+    font-size: 1.9em; margin-top: 0; margin-bottom: 1.2em;
+    color: var(--text-primary); padding-right: 50px; font-weight: 700;
+}
+.modal-body { /* No specific styles needed now */ }
+
+
+/* --- General Modal Button Styles --- */
+.modal-button {
+    display: inline-block;
+    margin: 5px;
+    font-weight: 700; text-decoration: none;
+    font-size: 1em;
+    padding: 10px 20px;
+    border: none; border-radius: 8px;
+    transition: all 0.3s ease;
+    cursor: pointer; text-align: center;
+    background-size: 200% auto; line-height: 1.4;
+    vertical-align: middle;
+}
+.modal-button:hover { transform: translateY(-2px); }
+
+/* Primary Button Style (Orange - Free License Submit) */
+.modal-button.primary {
+    background-image: linear-gradient(to right, var(--brand-orange-darker) 0%, var(--brand-orange) 50%, var(--brand-orange-darker) 100%);
+    color: #000;
+    box-shadow: 0 4px 10px rgba(255, 165, 0, 0.2);
+}
+.modal-button.primary:hover {
+    background-position: right center;
+    box-shadow: 0 8px 15px var(--brand-orange-glow);
+}
+
+/* Secondary Button Style (Subtle - Apply Free trigger) */
+.modal-button.secondary {
+    background-color: rgba(255, 255, 255, 0.08);
+    color: var(--text-secondary);
+    border: 1px solid var(--glass-border);
+    box-shadow: none;
+}
+.modal-button.secondary:hover {
+    background-color: rgba(255, 255, 255, 0.15);
+    border-color: var(--text-secondary);
+    color: var(--text-primary);
+}
+
+/* Purchase Button Style (Green) */
+.modal-button.purchase {
+    background-image: linear-gradient(to right, var(--brand-green-darker) 0%, var(--brand-green) 50%, var(--brand-green-darker) 100%);
+    color: #fff;
+    box-shadow: 0 4px 10px var(--brand-green-glow);
+}
+.modal-button.purchase:hover {
+    background-position: right center;
+    box-shadow: 0 8px 15px rgba(40, 167, 69, 0.4);
+}
+
+/* Large Button Style (Home page buttons) */
+.modal-button.large {
+    padding: 12px 28px;
+    font-size: 1.05em;
+}
+
+/* Small Button Style (Inside license cards) */
+.modal-button.small {
+    padding: 8px 16px;
+    font-size: 0.9em;
+}
+
+/* Style for the external link (#modal-link) to look like a button */
+#modal-link {
+    display: inline-block;
+    margin: 5px;
+    color: var(--text-secondary);
+    font-weight: 600; text-decoration: none;
+    font-size: 1em;
+    padding: 10px 20px;
+    border: 1px solid var(--glass-border);
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    background-color: rgba(255, 255, 255, 0.05);
+    vertical-align: middle;
+}
+#modal-link:hover {
+    transform: translateY(-2px);
+    background-color: rgba(255, 255, 255, 0.1);
+    color: var(--brand-orange);
+    border-color: var(--brand-orange);
+}
+
+/* Wrapper for buttons inside portfolio modal details */
+.modal-actions {
+    margin-top: 2em;
+    padding-top: 1.5em;
+    border-top: 1px solid var(--glass-border);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+
+/* Video Container Styles */
+#modal-video-container {
+    position: relative;
+    height: 0; /* Controlled by padding or inline style */
+    overflow: hidden;
+    max-width: 100%;
+    background: #111;
+    margin-bottom: 2.5em;
+    border-radius: 12px;
+    border: 1px solid var(--glass-border);
+    /* display: none; /* JS will set to block when needed */
+}
+#modal-video-container.aspect-16-9 { padding-bottom: 56.25%; height: 0 !important; }
+#modal-video-container.aspect-1-1 { padding-bottom: 100%; height: 0 !important; }
+#modal-video-container.aspect-16-9 iframe,
+#modal-video-container.aspect-1-1 iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0; border-radius: inherit; }
+
+#modal-video-container.fixed-height {
+     height: auto; /* Allow JS to set height */
+     padding-bottom: 0; overflow: visible;
+     background: #111; border: 1px solid var(--glass-border); border-radius: 12px;
+}
+#modal-video-container.fixed-height iframe {
+    position: static; display: block; width: 100%; max-width: 100%;
+    height: inherit; /* Inherit height from container */
+    border-radius: inherit; border: 0;
+}
+
+
+/* Modal Details Text */
+#modal-details {
+    /* Container for description, meta, actions */
+}
+#modal-description {
+    font-size: 1em; line-height: 1.7; color: var(--text-secondary);
+    margin-bottom: 1.5em; /* Space below description */
+}
+#modal-meta {
+    font-size: 0.9em; color: var(--text-muted);
+    margin-bottom: 0; /* Reset margin, actions wrapper handles spacing */
+    padding-top: 0; border-top: none; /* Reset padding/border */
+}
+
+
+/* --- Styles for Purchase Options Modal --- */
+#purchase-options-modal .modal-content {
+    max-width: 980px;
+    background-color: rgba(20, 20, 20, 0.92);
+}
+#purchase-options-modal h2 {
+    font-size: 1.9em; text-align: center; margin-bottom: 0.5em;
+}
+#purchase-beat-info {
+    text-align: center; font-size: 1.1em; font-style: italic;
+    color: var(--text-secondary); margin-bottom: 2em;
+}
+
+.license-container {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    margin-top: 1.5em;
+    flex-wrap: wrap;
+}
+
+.license-card {
+    border: 1px solid var(--glass-border);
+    padding: 20px 25px;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    background-color: rgba(40, 40, 40, 0.7);
+    -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    text-align: left;
+    flex: 1;
+    min-width: 260px;
+    max-width: 300px;
+    display: flex;
+    flex-direction: column;
+}
+
+.license-card:hover {
+    background-color: rgba(50, 50, 50, 0.8);
+    transform: translateY(-6px) scale(1.03);
+    box-shadow: 0 12px 30px var(--shadow-color-strong), 0 0 12px var(--brand-green-glow);
+    border-color: var(--brand-green);
+}
+
+.license-card h3 {
+    font-size: 1.3em;
+    margin-bottom: 0.6em;
+    color: var(--brand-green);
+    text-align: center;
+    border-bottom: 1px solid var(--glass-border);
+    padding-bottom: 0.6em;
+}
+
+.license-card p.price {
+    font-size: 1.2em;
+    font-weight: bold;
+    margin-bottom: 1.2em;
+    text-align: center;
+    color: var(--text-primary);
+}
+.license-card p.price .negotiable {
+    font-size: 0.7em; font-weight: normal; color: var(--text-secondary); display: block; margin-top: 2px;
+}
+
+.license-card ul.features {
+    list-style: none; padding: 0; margin-bottom: 1.5em;
+    font-size: 0.9em; color: var(--text-secondary); flex-grow: 1;
+}
+.license-card ul.features li {
+    margin-bottom: 0.7em; padding-left: 1.3em; position: relative;
+}
+.license-card ul.features li::before {
+    content: '✓'; position: absolute; left: 0;
+    color: var(--brand-green); font-weight: bold;
+}
+
+.license-card button.modal-button.small {
+    display: block; width: 100%; margin-top: auto;
+}
+#purchase-options-modal .small-info { /* Target info text inside purchase modal */
+    text-align: center;
+    margin-top: 2em;
+    font-size: 0.85em;
+    color: var(--text-muted);
+}
+/* --- End Purchase Modal Styles --- */
+
+
+/* Ko-fi Widget Styles */
+/* ... (same as before) ... */
+div[id^='kofi-widget-'] .kofi-button { background-color: transparent !important; border: 1px solid var(--brand-orange) !important; color: var(--brand-orange) !important; transition: all 0.3s ease !important; border-radius: 8px !important; }
+div[id^='kofi-widget-'] .kofi-button:hover { background-color: var(--brand-orange-glow) !important; color: var(--text-primary) !important; border-color: var(--brand-orange) !important; }
+
+/* Free License Form Styles */
+#license-apply-modal .modal-content { max-width: 650px; }
+#license-apply-modal h2 { font-size: 1.8em; margin-bottom: 1.5em; }
+#license-form .form-group { margin-bottom: 1.5em; }
+#license-form label { display: block; margin-bottom: 0.5em; font-weight: 600; color: var(--text-secondary); font-size: 0.95em; }
+#license-form input[type="text"], #license-form input[type="email"] { width: 100%; padding: 12px 15px; border-radius: 8px; border: 1px solid var(--glass-border); background-color: rgba(0, 0, 0, 0.2); color: var(--text-primary); font-size: 1em; transition: border-color 0.3s ease, background-color 0.3s ease; }
+#license-form input[type="text"]:focus, #license-form input[type="email"]:focus { outline: none; border-color: var(--brand-orange); background-color: rgba(0, 0, 0, 0.3); }
+#license-form input[readonly] { background-color: rgba(0, 0, 0, 0.1); cursor: not-allowed; opacity: 0.7; }
+#license-form input::placeholder { color: var(--text-muted); opacity: 0.7; }
+#license-form input:focus::placeholder { opacity: 0.5; }
+#license-form small { display: block; font-size: 0.8em; color: var(--text-muted); margin-top: 0.4em; }
+#license-form .agreement-box { margin-top: 2em; padding-top: 1.5em; border-top: 1px solid var(--glass-border); display: flex; align-items: flex-start; }
+#license-form .agreement-box input[type="checkbox"] { margin-right: 10px; margin-top: 4px; transform: scale(1.2); accent-color: var(--brand-orange); cursor: pointer; }
+#license-form .agreement-box label { display: inline; font-weight: normal; font-size: 0.9em; color: var(--text-secondary); }
+#license-form .agreement-box label a { color: var(--brand-orange); text-decoration: underline; cursor: pointer; }
+#license-form .agreement-box label a:hover { color: var(--brand-orange-darker); }
+#license-form .form-actions { margin-top: 2.5em; text-align: center; }
+.error-message { font-size: 0.9em; font-weight: bold; text-align: center; color: #ff6b6b; margin-top: 10px; }
+
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .modal-content { padding: 25px; width: 92%; }
+    .modal-content h2 { font-size: 1.6em; }
+    .portfolio-grid { grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 25px; }
+    .grid-item img { height: 180px; }
+    .home-action-button-container { gap: 15px; }
+    #purchase-options-modal .modal-content { max-width: 90%; }
+    .license-container { gap: 20px; justify-content: center; }
+    .license-card { min-width: 220px; max-width: 280px; }
+}
+
+@media (max-width: 600px) {
+    body { padding: 5px; }
+    .container { margin: 20px auto; padding: 15px; }
+    .portfolio-grid { grid-template-columns: 1fr; gap: 20px; }
+    .grid-item img { height: 200px; }
+    .grid-item h4 { font-size: 1em; padding: 18px 20px; }
+    .main-header h1 { font-size: 1.9em; }
+    .main-header .subtitle { font-size: 1.05em; }
+    .modal-content { padding: 25px 20px; width: 95%; max-height: 88vh; }
+    .modal-close { top: 15px; right: 15px; width: 36px; height: 36px; font-size: 1.8em; }
+    .modal-content h2 { font-size: 1.6em; }
+    .home-action-button-container { flex-direction: column; gap: 15px; }
+    p.small-info.home-info { margin-bottom: 2em;}
+    .modal-button.large { padding: 12px 25px; font-size: 1em; }
+    .modal-actions { flex-direction: column; align-items: stretch; }
+    #modal-link, .modal-actions .modal-button { width: 100%; margin: 0 0 10px 0; text-align: center; }
+     .modal-actions .modal-button:last-child { margin-bottom: 0; }
+    #purchase-options-modal .modal-content { padding: 25px 15px; }
+    .license-container { flex-direction: column; align-items: center; gap: 20px; }
+    .license-card { width: 90%; max-width: none; }
+    /* License Form Responsive */
+    #license-apply-modal .modal-content { padding: 25px 15px; }
+    #license-apply-modal h2 { font-size: 1.5em; }
+    #license-form .form-group { margin-bottom: 1.2em; }
+    #license-form input[type="text"] { padding: 10px 12px; }
+    #license-form .agreement-box label { font-size: 0.85em; }
+}
+/* END OF FILE style.css */
