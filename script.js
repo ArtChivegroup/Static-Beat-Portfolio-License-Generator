@@ -3,7 +3,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const portfolioGrid = document.querySelector('.portfolio-grid');
 
     // Portfolio Modal Elements
-    // ... (keep existing portfolio modal selectors) ...
     const portfolioModal = document.getElementById('portfolio-modal');
     const portfolioModalOverlay = portfolioModal.querySelector('.modal-overlay');
     const portfolioModalCloseBtn = portfolioModal.querySelector('.modal-close');
@@ -14,7 +13,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const modalLink = document.getElementById('modal-link');
     const applyLicenseBtnPortfolio = document.getElementById('apply-license-btn');
     const purchaseLicenseBtnPortfolio = document.getElementById('purchase-license-btn');
-
 
     // License Application Modal (Free) Elements
     const licenseApplyModal = document.getElementById('license-apply-modal');
@@ -28,30 +26,32 @@ document.addEventListener('DOMContentLoaded', () => {
     const licenseFormError = document.getElementById('license-form-error');
     const viewTermsLink = document.getElementById('view-license-terms-link');
     const fullTermsDiv = document.getElementById('license-terms-full');
-    // --- NEW: Select the specific buttons ---
     const generateLicenseBtn = document.getElementById('generate-license-btn');
     const downloadLicenseBtn = document.getElementById('download-license-btn');
+    const licenseDisplayArea = document.getElementById('license-display-area');
+    const licenseTextOutput = document.getElementById('license-text-output');
 
     // Purchase Options Modal Elements
-    // ... (keep existing purchase modal selectors) ...
     const purchaseOptionsModal = document.getElementById('purchase-options-modal');
     const purchaseModalOverlay = purchaseOptionsModal.querySelector('.modal-overlay');
     const purchaseModalCloseBtn = purchaseOptionsModal.querySelector('.modal-close');
     const purchaseModalTitle = document.getElementById('purchase-modal-title');
     const purchaseBeatInfo = document.getElementById('purchase-beat-info');
 
-
     // Home Page Buttons
     const homeApplyLicenseBtn = document.getElementById('home-apply-license-btn');
     const homePurchaseLicenseBtn = document.getElementById('home-purchase-license-btn');
 
-    // Basic check for essential elements (include new buttons)
+    // Basic check for essential elements
     if (!portfolioGrid || !portfolioModal || !applyLicenseBtnPortfolio || !purchaseLicenseBtnPortfolio ||
         !licenseApplyModal || !licenseForm || !homeApplyLicenseBtn || !homePurchaseLicenseBtn ||
         !purchaseOptionsModal || !purchaseModalCloseBtn || !purchaseModalOverlay || !modalVideoContainer ||
-        !generateLicenseBtn || !downloadLicenseBtn ) { // Added generate/download button check
-        console.error("Essential modal, grid, button, or license action button elements not found! Check IDs.");
-        return;
+        !generateLicenseBtn || !downloadLicenseBtn || !licenseDisplayArea || !licenseTextOutput ||
+        !fullTermsDiv || !viewTermsLink || !licenseFormError) {
+        console.error("Essential UI elements not found! Check IDs in index.html and script.js.");
+        // Optional: Display a user-facing error message on the page
+        // document.body.innerHTML = '<p style="color: red; padding: 20px;">Error: Page could not load correctly. Essential elements missing.</p>';
+        return; // Stop script execution if critical elements are missing
     }
 
     // --- License Template (Plain Text) ---
@@ -106,6 +106,7 @@ Artchive Beat / Moch Dimas Almahtar
 Contact for Licensing & Renewal: dimasalmactar12@gmail.com
 Instagram: @dmz.artchive or @beat.artchive
 `;
+    // Populate the expandable terms view
     if (fullTermsDiv) {
          let displayTerms = licenseTemplate
             .replace('{{BEAT_TITLE}}', '[Beat Title]')
@@ -115,9 +116,9 @@ Instagram: @dmz.artchive or @beat.artchive
         fullTermsDiv.innerText = displayTerms;
     }
 
-    // --- Gumroad URL ---
+    // --- Gumroad URL & Contact Email ---
     const GUMROAD_URL = "https://dimasalmactar.gumroad.com/l/utalaj?wanted=true";
-    const EXCLUSIVE_CONTACT_EMAIL = "dimasalmactar12@gmail.com"; // Your contact email
+    const EXCLUSIVE_CONTACT_EMAIL = "dimasalmactar12@gmail.com";
 
     // --- Helper Function to Open Free License Modal ---
     const openLicenseModal = (beatTitle = null) => {
@@ -125,12 +126,18 @@ Instagram: @dmz.artchive or @beat.artchive
         licenseFormError.style.display = 'none'; // Hide errors
         fullTermsDiv.style.display = 'none'; // Hide full terms
 
-        // --- Reset button states ---
+        // Reset button states
         generateLicenseBtn.style.display = 'inline-block'; // Show generate button
         generateLicenseBtn.disabled = false;               // Enable it
         generateLicenseBtn.textContent = 'Generate License'; // Reset text
-        downloadLicenseBtn.style.display = 'none';         // Hide download button
+        downloadLicenseBtn.style.display = 'none';         // Hide view/download button
+        downloadLicenseBtn.textContent = 'View & Download License'; // Reset text
 
+        // Hide and clear the license display area
+        licenseDisplayArea.style.display = 'none';
+        licenseTextOutput.value = '';
+
+        // Pre-fill beat title if provided
         if (beatTitle) {
             licenseBeatTitleInput.value = beatTitle;
             licenseBeatTitleInput.readOnly = true;
@@ -140,66 +147,62 @@ Instagram: @dmz.artchive or @beat.artchive
             licenseBeatTitleInput.readOnly = false;
             licenseBeatTitleInput.placeholder = "Enter the exact beat title";
         }
+
+        // Show the modal
         licenseApplyModal.classList.add('is-visible');
-        document.body.classList.add('modal-open');
+        document.body.classList.add('modal-open'); // Prevent body scrolling
         const content = licenseApplyModal.querySelector('.modal-content');
-        if (content) content.scrollTop = 0;
+        if (content) content.scrollTop = 0; // Scroll modal to top
     };
 
     // --- Helper Function to Open Purchase Options Modal ---
-    // ... (keep existing openPurchaseModal function) ...
-      const openPurchaseModal = (beatTitle = null) => {
+    const openPurchaseModal = (beatTitle = null) => {
         if (beatTitle) {
             purchaseModalTitle.textContent = "Purchase License";
             purchaseBeatInfo.textContent = `Beat: ${beatTitle}`;
             purchaseBeatInfo.style.display = 'block';
-            purchaseOptionsModal.dataset.beatTitle = beatTitle;
+            purchaseOptionsModal.dataset.beatTitle = beatTitle; // Store beat title for later use
         } else {
             purchaseModalTitle.textContent = "Choose Your Beat License";
             purchaseBeatInfo.style.display = 'none';
              delete purchaseOptionsModal.dataset.beatTitle;
         }
+        // Show the modal
         purchaseOptionsModal.classList.add('is-visible');
         document.body.classList.add('modal-open');
-         const content = purchaseOptionsModal.querySelector('.modal-content');
+        const content = purchaseOptionsModal.querySelector('.modal-content');
         if (content) content.scrollTop = 0;
     };
 
-
-    // --- Function to Open Gumroad Link / Contact ---
-    // ... (keep existing openGumroad function) ...
+    // --- Function to Open Gumroad Link / Contact (Attached to window for onclick) ---
     window.openGumroad = function(licenseType) {
         console.log(`Gumroad/Contact selected: ${licenseType}`);
-        let url = GUMROAD_URL; // Default to standard/premium link
+        let url = GUMROAD_URL; // Default to standard/premium Gumroad link
         const beatTitle = purchaseOptionsModal.dataset.beatTitle || "General Inquiry"; // Get beat title if available
 
         if (licenseType === 'exclusive') {
-            // Option 1: Mailto link
+            // Create mailto link for exclusive inquiries
              url = `mailto:${EXCLUSIVE_CONTACT_EMAIL}?subject=Exclusive License Inquiry: ${encodeURIComponent(beatTitle)}`;
              console.log("Opening mailto for exclusive:", url);
              window.location.href = url;
-             // Option 2: Just close modal and rely on user contacting via footer/other means
-             // console.log("Exclusive selected. Please contact via email.");
+             // Optionally close the modal after opening mail client
              // closePurchaseModal();
-             // return; // Stop execution if only closing modal
         } else {
-             // For standard/premium, potentially add info to URL if Gumroad supports it
-             // Example: Add license type as variant or query param (check Gumroad docs)
-             // url += `?variant=${licenseType}`; // Or similar
-             // url += `&beat=${encodeURIComponent(beatTitle)}` // If useful
+             // For standard/premium, redirect to Gumroad
+             // You could potentially add parameters if Gumroad supports them, e.g., ?variant=premium
              console.log("Redirecting to Gumroad:", url);
-             window.location.href = url; // Redirect for standard/premium
-             // Alternative: window.open(url, '_blank');
+             window.location.href = url; // Or use window.open(url, '_blank');
+             // Optionally close the modal after redirecting
+             // closePurchaseModal();
         }
     }
 
     // --- Open Portfolio Modal ---
-    // ... (keep existing portfolio modal opening logic) ...
-        portfolioGrid.addEventListener('click', (event) => {
+    portfolioGrid.addEventListener('click', (event) => {
         const gridItem = event.target.closest('.grid-item');
-        if (!gridItem) return;
+        if (!gridItem) return; // Clicked outside an item
 
-        // Get data
+        // --- Get Data Attributes from Clicked Item ---
         const title = gridItem.dataset.title || 'Project Details';
         const type = gridItem.dataset.type;
         const videoId = gridItem.dataset.videoId;
@@ -213,18 +216,19 @@ Instagram: @dmz.artchive or @beat.artchive
 
         console.log('Clicked Item Data:', { title, type, videoId, embedUrl, videoHeight, link, isBeat });
 
-        // Populate modal text details
+        // --- Populate Modal Text Details ---
         modalTitle.textContent = title;
         modalDescription.textContent = description;
         modalMeta.textContent = meta;
-        modalLink.href = link || '#'; // Ensure link has a value
+        modalLink.href = link || '#';
         modalLink.textContent = linkText;
-        modalLink.style.display = (link && link !== '#') ? 'inline-block' : 'none'; // Hide if no valid link
+        modalLink.style.display = (link && link !== '#') ? 'inline-block' : 'none';
 
-        // Show/Hide License Buttons
+        // --- Show/Hide License Buttons based on 'data-is-beat' ---
         if (isBeat) {
             applyLicenseBtnPortfolio.style.display = 'inline-block';
             purchaseLicenseBtnPortfolio.style.display = 'inline-block';
+            // Store the beat title on the buttons for later use
             applyLicenseBtnPortfolio.dataset.beatTitle = title;
             purchaseLicenseBtnPortfolio.dataset.beatTitle = title;
         } else {
@@ -236,95 +240,132 @@ Instagram: @dmz.artchive or @beat.artchive
 
         // --- Clear previous video/embed and reset container ---
         modalVideoContainer.innerHTML = '';
-        modalVideoContainer.className = 'modal-video-container';
-        modalVideoContainer.style.height = '';
-        modalVideoContainer.style.paddingBottom = '';
+        modalVideoContainer.className = 'modal-video-container'; // Reset classes
+        modalVideoContainer.style.height = ''; // Reset inline height
+        modalVideoContainer.style.paddingBottom = ''; // Reset padding
         modalVideoContainer.style.display = 'none'; // Ensure hidden initially
 
         let embedHtml = '';
-        let needsContainerDisplayBlock = false;
+        let needsContainerDisplayBlock = false; // Flag to show container
 
-        // --- Create Embed Based on Type ---
+        // --- Create Embed HTML Based on Type ---
          if (type === 'youtube' && videoId) {
             console.log('Creating YouTube embed');
             embedHtml = `<iframe src="https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0" title="${title}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>`;
-            modalVideoContainer.classList.add('aspect-16-9');
+            modalVideoContainer.classList.add('aspect-16-9'); // Use CSS for aspect ratio
             needsContainerDisplayBlock = true;
         } else if ((type === 'spotify' || type === 'soundcloud') && embedUrl) {
             console.log(`Creating ${type} embed`);
-            let defaultHeight = type === 'spotify' ? (videoHeight || '152') : (videoHeight || '166');
+            let defaultHeight = type === 'spotify' ? (videoHeight || '152') : (videoHeight || '166'); // Use data-height or default
             embedHtml = `<iframe style="border-radius:12px;" src="${embedUrl}" width="100%" height="${defaultHeight}" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>`;
             modalVideoContainer.classList.add('fixed-height');
             modalVideoContainer.style.height = `${defaultHeight}px`; // Set explicit height
             needsContainerDisplayBlock = true;
         } else if (type === 'instagram' && link) {
             console.log('Creating Instagram embed');
+            // Basic Instagram embed via iframe (requires server-side proxy for reliable display usually)
+            // Note: Instagram embedding can be unreliable due to their restrictions.
             try {
-                let instagramEmbedUrl = link.trim().split('?')[0];
+                let instagramEmbedUrl = link.trim().split('?')[0]; // Remove query params
                 if (!instagramEmbedUrl.endsWith('/')) instagramEmbedUrl += '/';
-                instagramEmbedUrl += 'embed/';
+                instagramEmbedUrl += 'embed/'; // Append /embed/
                 embedHtml = `<iframe src="${instagramEmbedUrl}" style="border:none; overflow:hidden; border-radius: 12px;" scrolling="no" frameborder="0" allowTransparency="true" allowfullscreen="true" title="${title} Instagram Post"></iframe>`;
-                modalVideoContainer.classList.add('aspect-1-1');
+                modalVideoContainer.classList.add('aspect-1-1'); // Instagram posts are often square
                 needsContainerDisplayBlock = true;
-                console.log("Instagram Iframe URL:", instagramEmbedUrl);
+                console.log("Attempting Instagram Iframe URL:", instagramEmbedUrl);
             } catch (e) {
                 console.error("Error constructing Instagram iframe URL:", e);
-                embedHtml = `<p style="text-align:center; color: var(--text-secondary); padding: 20px;">Could not create Instagram embed.</p>`;
+                embedHtml = `<p style="text-align:center; color: var(--text-secondary); padding: 20px;">Could not create Instagram embed. <a href="${link}" target="_blank" rel="noopener noreferrer" style="color: var(--brand-orange);">View on Instagram</a></p>`;
                 needsContainerDisplayBlock = true;
             }
         } else {
              console.log(`No valid embed type found or data missing for type: ${type}`);
+             // Optionally display the image from the grid item if no embed is possible
+             // const imgSrc = gridItem.querySelector('img')?.src;
+             // if (imgSrc) {
+             //     embedHtml = `<img src="${imgSrc}" alt="${title}" style="display:block; max-width:100%; height:auto; border-radius: 12px;">`;
+             //     needsContainerDisplayBlock = true;
+             // }
         }
 
-        // --- Display Container Logic ---
+        // --- Display Embed Container Logic ---
         if (needsContainerDisplayBlock) {
             console.log('Setting video container display to block and injecting HTML');
-            modalVideoContainer.style.display = 'block'; // <<< KEY LINE TO SHOW CONTAINER
-            modalVideoContainer.innerHTML = embedHtml;
+            modalVideoContainer.style.display = 'block'; // Make container visible
+            modalVideoContainer.innerHTML = embedHtml;   // Add the embed code
         } else {
             console.log('No embed content generated, keeping container hidden.');
             modalVideoContainer.style.display = 'none'; // Keep hidden
         }
 
-        // Show Portfolio Modal
+        // --- Show Portfolio Modal ---
         portfolioModal.classList.add('is-visible');
         document.body.classList.add('modal-open');
         const content = portfolioModal.querySelector('.modal-content');
-        if (content) content.scrollTop = 0;
+        if (content) content.scrollTop = 0; // Scroll modal to top
     });
 
 
-    // --- Event Listeners for Buttons ---
-    applyLicenseBtnPortfolio.addEventListener('click', () => { const beatTitle = applyLicenseBtnPortfolio.dataset.beatTitle; if (beatTitle) openLicenseModal(beatTitle); });
-    purchaseLicenseBtnPortfolio.addEventListener('click', () => { const beatTitle = purchaseLicenseBtnPortfolio.dataset.beatTitle; if (beatTitle) openPurchaseModal(beatTitle); });
-    homeApplyLicenseBtn.addEventListener('click', () => { openLicenseModal(); }); // Resets state via openLicenseModal
-    homePurchaseLicenseBtn.addEventListener('click', () => { openPurchaseModal(); });
+    // --- Event Listeners for Modal Buttons ---
+    // Apply Free License (from Portfolio Modal)
+    applyLicenseBtnPortfolio.addEventListener('click', () => {
+        const beatTitle = applyLicenseBtnPortfolio.dataset.beatTitle;
+        if (beatTitle) {
+            openLicenseModal(beatTitle); // Open free license modal with title
+        }
+    });
+    // Purchase License (from Portfolio Modal)
+    purchaseLicenseBtnPortfolio.addEventListener('click', () => {
+        const beatTitle = purchaseLicenseBtnPortfolio.dataset.beatTitle;
+        if (beatTitle) {
+            openPurchaseModal(beatTitle); // Open purchase modal with title
+        }
+    });
+    // Apply Free License (from Home Page)
+    homeApplyLicenseBtn.addEventListener('click', () => {
+        openLicenseModal(); // Open free license modal without specific title
+    });
+    // Purchase License (from Home Page)
+    homePurchaseLicenseBtn.addEventListener('click', () => {
+        openPurchaseModal(); // Open purchase modal without specific title
+    });
 
     // --- Close Modals Functions ---
-    // ... (keep existing close modal functions) ...
-     const closePortfolioModal = () => {
+    const closePortfolioModal = () => {
         portfolioModal.classList.remove('is-visible');
-        if (!licenseApplyModal.classList.contains('is-visible') && !purchaseOptionsModal.classList.contains('is-visible')) { document.body.classList.remove('modal-open'); }
+        // Remove modal-open class only if no other modals are visible
+        if (!licenseApplyModal.classList.contains('is-visible') && !purchaseOptionsModal.classList.contains('is-visible')) {
+            document.body.classList.remove('modal-open');
+        }
+        // Stop video/audio playback by clearing the container
         modalVideoContainer.innerHTML = '';
-        modalVideoContainer.style.height = ''; modalVideoContainer.style.paddingBottom = ''; modalVideoContainer.className = 'modal-video-container'; modalVideoContainer.style.display = 'none'; // Ensure hidden on close
+        modalVideoContainer.style.display = 'none'; // Ensure hidden on close
     };
+
     const closeLicenseModal = () => {
         licenseApplyModal.classList.remove('is-visible');
-        if (!portfolioModal.classList.contains('is-visible') && !purchaseOptionsModal.classList.contains('is-visible')) { document.body.classList.remove('modal-open'); }
-        // Reset button states when closing modal explicitly
+        // Remove modal-open class only if no other modals are visible
+        if (!portfolioModal.classList.contains('is-visible') && !purchaseOptionsModal.classList.contains('is-visible')) {
+            document.body.classList.remove('modal-open');
+        }
+        // Reset button states and clear display area when closing manually
         generateLicenseBtn.style.display = 'inline-block';
         generateLicenseBtn.disabled = false;
         generateLicenseBtn.textContent = 'Generate License';
         downloadLicenseBtn.style.display = 'none';
+        licenseDisplayArea.style.display = 'none'; // Hide display area
+        licenseTextOutput.value = ''; // Clear text
     };
+
     const closePurchaseModal = () => {
         purchaseOptionsModal.classList.remove('is-visible');
-         if (!portfolioModal.classList.contains('is-visible') && !licenseApplyModal.classList.contains('is-visible')) { document.body.classList.remove('modal-open'); }
+        // Remove modal-open class only if no other modals are visible
+        if (!portfolioModal.classList.contains('is-visible') && !licenseApplyModal.classList.contains('is-visible')) {
+            document.body.classList.remove('modal-open');
+        }
     };
 
-
     // --- Event Listeners for Closing Modals ---
-    // ... (keep existing close modal listeners) ...
     portfolioModalCloseBtn.addEventListener('click', closePortfolioModal);
     portfolioModalOverlay.addEventListener('click', closePortfolioModal);
     licenseModalCloseBtn.addEventListener('click', closeLicenseModal);
@@ -332,14 +373,18 @@ Instagram: @dmz.artchive or @beat.artchive
     purchaseModalCloseBtn.addEventListener('click', closePurchaseModal);
     purchaseModalOverlay.addEventListener('click', closePurchaseModal);
 
-
     // --- Show/Hide Full Free License Terms ---
-    viewTermsLink.addEventListener('click', (e) => { e.preventDefault(); const isVisible = fullTermsDiv.style.display === 'block'; fullTermsDiv.style.display = isVisible ? 'none' : 'block'; });
+    viewTermsLink.addEventListener('click', (e) => {
+        e.preventDefault(); // Prevent default link behavior
+        const isVisible = fullTermsDiv.style.display === 'block';
+        fullTermsDiv.style.display = isVisible ? 'none' : 'block'; // Toggle display
+    });
 
-    // --- MODIFIED: Handle Free License Form Submission (Step 1: Generate) ---
+    // --- Handle Free License Form Submission (Step 1: Validate & Prepare) ---
     licenseForm.addEventListener('submit', (event) => {
         event.preventDefault(); // Prevent actual form submission
-        licenseFormError.style.display = 'none';
+        licenseFormError.style.display = 'none'; // Hide previous errors
+        licenseDisplayArea.style.display = 'none'; // Ensure display area is hidden
 
         // --- Validation ---
         const beatTitle = licenseBeatTitleInput.value.trim();
@@ -347,20 +392,19 @@ Instagram: @dmz.artchive or @beat.artchive
         const signature = licenseSignatureInput.value.trim();
         const agreed = licenseAgreementCheck.checked;
 
-        if (!beatTitle || !userName || !signature) {
-            licenseFormError.textContent = "Please fill in all fields.";
-            licenseFormError.style.display = 'block';
-            return;
+        let errors = [];
+        if (!beatTitle) errors.push("Beat Title is required.");
+        if (!userName) errors.push("Your Full Name is required.");
+        if (!signature) errors.push("Digital Signature is required.");
+        if (signature && signature.toLowerCase() !== userName.toLowerCase()) {
+            errors.push("Signature must match your full name.");
         }
-        if (signature.toLowerCase() !== userName.toLowerCase()) {
-            licenseFormError.textContent = "Signature must match your full name.";
+        if (!agreed) errors.push("You must agree to the license terms.");
+
+        if (errors.length > 0) {
+            licenseFormError.innerHTML = errors.join('<br>'); // Display all errors
             licenseFormError.style.display = 'block';
-            return;
-        }
-        if (!agreed) {
-            licenseFormError.textContent = "You must agree to the license terms.";
-            licenseFormError.style.display = 'block';
-            return;
+            return; // Stop if validation fails
         }
         // --- End Validation ---
 
@@ -368,79 +412,92 @@ Instagram: @dmz.artchive or @beat.artchive
         generateLicenseBtn.textContent = 'Generating...';
         generateLicenseBtn.disabled = true;
 
-        // Simulate generation time (e.g., 1.5 seconds)
+        // Simulate generation time (e.g., 1 second)
         setTimeout(() => {
             generateLicenseBtn.style.display = 'none';    // Hide Generate button
-            downloadLicenseBtn.style.display = 'inline-block'; // Show Download button
-            // We don't generate the file content *yet*.
-        }, 1500); // Adjust delay as needed
+            downloadLicenseBtn.style.display = 'inline-block'; // Show View & Download button
+            // The actual generation happens when the user clicks the next button
+        }, 1000); // Adjust delay as needed
     });
 
-    // --- NEW: Handle Download Button Click (Step 2: Download) ---
+    // --- Handle "View & Download" Button Click (Step 2: Generate, Display, Attempt Download) ---
     downloadLicenseBtn.addEventListener('click', () => {
-        // Get values again (in case they were changed, though unlikely here)
+        // Get current form values
         const beatTitle = licenseBeatTitleInput.value.trim();
         const userName = licenseUserNameInput.value.trim();
         const signature = licenseSignatureInput.value.trim();
-        const currentDate = new Date().toLocaleDateString();
+        const currentDate = new Date().toLocaleDateString(); // Format date based on locale
 
         // Basic check again just in case
         if (!beatTitle || !userName || !signature) {
-            alert('Error: Form data missing. Please try generating again.');
-             // Reset state
-             generateLicenseBtn.style.display = 'inline-block';
-             generateLicenseBtn.disabled = false;
-             generateLicenseBtn.textContent = 'Generate License';
-             downloadLicenseBtn.style.display = 'none';
-             licenseFormError.textContent = "Error retrieving data. Please refill.";
-             licenseFormError.style.display = 'block';
+            alert('Error: Form data seems to be missing. Please close and try again.');
+             closeLicenseModal(); // Close and reset state
             return;
         }
 
-        // --- Generate the license content NOW ---
+        // --- Generate the license content ---
         let generatedLicense = licenseTemplate
             .replace('{{BEAT_TITLE}}', beatTitle)
-            .replace(/\{\{USER_NAME\}\}/g, userName)
+            .replace(/\{\{USER_NAME\}\}/g, userName) // Use global replace for name
             .replace('{{SIGNATURE}}', signature)
             .replace('{{DATE}}', currentDate);
 
-        // --- Create Blob and trigger download ---
-        const blob = new Blob([generatedLicense], { type: 'text/plain;charset=utf-8' });
-        const url = URL.createObjectURL(blob);
-        const tempLink = document.createElement('a');
-        const safeBeatTitle = beatTitle.replace(/[^a-z0-9_-]/gi, '_').replace(/_+/g, '_');
-        const safeUserName = userName.replace(/[^a-z0-9_-]/gi, '_').replace(/_+/g, '_');
-        tempLink.download = `Free_License_${safeBeatTitle}_${safeUserName}.txt`;
-        tempLink.href = url;
-        tempLink.style.display = 'none';
-        document.body.appendChild(tempLink);
-        tempLink.click(); // Trigger download
-        document.body.removeChild(tempLink);
-        URL.revokeObjectURL(url); // Clean up
+        // --- 1. Display the license text in the textarea ---
+        licenseTextOutput.value = generatedLicense; // Set textarea content
+        licenseDisplayArea.style.display = 'block'; // Show the display area
 
-        // --- Close the modal after download ---
-        closeLicenseModal();
+        // Scroll the modal content down slightly to help reveal the new area
+        const modalContent = licenseApplyModal.querySelector('.modal-content');
+        if(modalContent) {
+            // Smooth scroll if supported, otherwise jump
+             if ('scrollBehavior' in document.documentElement.style) {
+                 modalContent.scrollTo({ top: modalContent.scrollHeight, behavior: 'smooth' });
+             } else {
+                 modalContent.scrollTop = modalContent.scrollHeight;
+             }
+        }
+
+        // --- 2. Attempt the file download ---
+        try {
+            const blob = new Blob([generatedLicense], { type: 'text/plain;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const tempLink = document.createElement('a');
+
+            // Create a safe filename
+            const safeBeatTitle = beatTitle.replace(/[^a-z0-9_\-\.]/gi, '_').replace(/_+/g, '_');
+            const safeUserName = userName.replace(/[^a-z0-9_\-]/gi, '_').replace(/_+/g, '_');
+            tempLink.download = `Free_License_${safeBeatTitle}_${safeUserName}.txt`;
+
+            tempLink.href = url;
+            tempLink.style.display = 'none'; // Hide the link
+            document.body.appendChild(tempLink); // Add link to body
+            tempLink.click(); // Programmatically click the link to trigger download
+            document.body.removeChild(tempLink); // Remove link from body
+            URL.revokeObjectURL(url); // Release the object URL
+             console.log("Download attempt initiated.");
+        } catch (error) {
+            console.error("Download failed:", error);
+            // Optionally alert the user or log error, but the text is visible anyway.
+            // alert("File download attempt failed. Please copy the text manually.");
+        }
+
+        // --- 3. Keep the modal open ---
+        // User can now view/copy the text and close the modal manually when done.
     });
 
 
-    // --- Global Escape Key Listener ---
-    // ... (keep existing escape key listener) ...
+    // --- Global Escape Key Listener to Close Topmost Modal ---
     document.addEventListener('keydown', (event) => {
         if (event.key === 'Escape') {
-            if (purchaseOptionsModal.classList.contains('is-visible')) { closePurchaseModal(); }
-            else if (licenseApplyModal.classList.contains('is-visible')) { closeLicenseModal(); }
-            else if (portfolioModal.classList.contains('is-visible')) { closePortfolioModal(); }
+            // Close modals in reverse order of likely appearance
+            if (purchaseOptionsModal.classList.contains('is-visible')) {
+                closePurchaseModal();
+            } else if (licenseApplyModal.classList.contains('is-visible')) {
+                closeLicenseModal();
+            } else if (portfolioModal.classList.contains('is-visible')) {
+                closePortfolioModal();
+            }
         }
     });
-
-    // Remove the duplicate/conflicting event listeners at the end of the original file
-    // These were causing issues with the new logic.
-    /*
-    document.getElementById('license-form').addEventListener('submit', function (e) { ... }); // REMOVE THIS BLOCK
-    document.getElementById('download-license-btn').addEventListener('click', function () { ... }); // REMOVE THIS BLOCK
-    document.getElementById('home-apply-license-btn').addEventListener('click', function () { ... }); // REMOVE THIS BLOCK
-    document.getElementById('license-form').addEventListener('submit', function (e) { ... }); // REMOVE THIS BLOCK
-    document.getElementById('download-license-btn').addEventListener('click', function () { ... }); // REMOVE THIS BLOCK
-    */
 
 }); // End of DOMContentLoaded listener

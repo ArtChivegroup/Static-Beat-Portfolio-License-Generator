@@ -347,15 +347,22 @@
                      <label for="license-agreement-check">I have read and agree to the <a href="#view-terms" id="view-license-terms-link">Free License Terms</a> (10k streams/views limit, non-commercial, credit required).</label>
                 </div>
                  <div id="license-terms-full" style="display: none; max-height: 150px; overflow-y: auto; border: 1px solid var(--glass-border); padding: 10px; margin-bottom: 1em; font-size: 0.85em; background: rgba(0,0,0,0.2);"></div>
-                <!-- === UPDATED BUTTONS AREA === -->
                 <div class="form-actions">
                     <!-- Step 1 Button -->
                     <button type="submit" id="generate-license-btn" class="modal-button primary">Generate License</button>
-                    <!-- Step 2 Button - Initially Hidden -->
-                    <button type="button" id="download-license-btn" class="modal-button secondary" style="display: none;">Download License</button>
+                    <!-- Step 2 Button - Initially Hidden - Text Updated -->
+                    <button type="button" id="download-license-btn" class="modal-button secondary" style="display: none;">View & Download License</button>
                 </div>
                 <p id="license-form-error" class="error-message" style="display: none;"></p>
-                 <!-- === END UPDATED BUTTONS AREA === -->
+
+                <!-- === NEW AREA TO DISPLAY LICENSE TEXT === -->
+                <div id="license-display-area" style="margin-top: 2em; display: none;">
+                    <p style="font-weight: bold; margin-bottom: 0.5em; color: var(--text-secondary);">License Generated:</p>
+                    <textarea id="license-text-output" rows="10" readonly style="width: 100%; background-color: rgba(0,0,0,0.25); color: var(--text-primary); border: 1px solid var(--glass-border); padding: 10px; font-size: 0.85em; border-radius: 8px; resize: vertical;"></textarea>
+                    <p style="font-size: 0.8em; color: var(--text-muted); margin-top: 0.5em;">You can copy the text above. File download has been attempted.</p>
+                </div>
+                <!-- === END DISPLAY AREA === -->
+
             </form>
         </div>
     </div>
@@ -400,6 +407,7 @@
 
     <script src="script.js"></script>
     <script>
+        // Sets the current year in the footer
         document.getElementById('currentYear').textContent = new Date().getFullYear();
     </script>
 </body>
