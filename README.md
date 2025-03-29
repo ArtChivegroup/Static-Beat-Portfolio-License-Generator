@@ -1,5 +1,5 @@
 # Static Beat Portfolio & License Generator
-
+ 
 A responsive static website template designed to showcase creative works (beats, music, videos) with integrated client-side free license generation and links for purchasing paid licenses via Gumroad. Built purely with HTML, CSS, and Vanilla JavaScript.
 
 ![Screenshot Placeholder](./screenshot.png)
