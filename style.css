@@ -1,534 +1,744 @@
 /* START OF FILE style.css */
+/* Styles from the FIRST file (modern design) */
 
 /* Basic Reset */
-* {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-}
+* { box-sizing: border-box; margin: 0; padding: 0; }
 
 /* Variables */
 :root {
-    --bg-color-start: #1a1a1a;
-    --bg-color-end: #0f0f0f;
-    --surface-color: #1e1e1e;
-    --glass-bg: rgba(30, 30, 30, 0.75);
-    --glass-border: rgba(255, 255, 255, 0.12);
-    --glass-shadow: rgba(0, 0, 0, 0.35);
-    --text-primary: #f5f5f5;
-    --text-secondary: #b0b0b0;
-    --text-muted: #888888;
-    --brand-orange: #FFA500;
-    --brand-orange-darker: #FF8C00;
-    --brand-orange-glow: rgba(255, 165, 0, 0.35);
-    --brand-green: #28a745; /* Added for purchase button */
-    --brand-green-darker: #218838; /* Added for purchase button */
-    --brand-green-glow: rgba(40, 167, 69, 0.35); /* Added for purchase button */
-    --shadow-color-light: rgba(0, 0, 0, 0.2);
-    --shadow-color-strong: rgba(0, 0, 0, 0.45);
+    --bg-color: #101010;
+    --card-bg: #1a1a1a;
+    --card-border: #2c2c2c;
+    --card-shadow: rgba(0, 0, 0, 0.15);
+    --text-primary: #ffffff; /* Bright white */
+    --text-secondary: #f0f0f0; /* Slightly dimmer white */
+    --text-muted: #d0d0d0; /* Muted white */
+    --brand-orange: #F2994A;
+    --brand-orange-darker: #E07A3F;
+    --brand-orange-glow: rgba(242, 153, 74, 0.2);
+    --brand-green: #27AE60; --brand-green-darker: #219653;
+    --brand-green-glow: rgba(39, 174, 96, 0.2);
+    --shadow-color-strong: rgba(0, 0, 0, 0.4);
+    --modal-bg: #222222;
+    --modal-border: #383838;
+    --modal-shadow: rgba(0, 0, 0, 0.45);
+    --modal-video-radius: 10px;
+    --border-radius-cards: 12px; /* Slightly less round */
+    --grid-gap: 15px; /* Tighter spacing */
+    --input-bg: #252525;
+    --input-border: #404040;
+    --input-focus-border: var(--brand-orange);
+    --text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8); /* Subtle shadow */
 }
 
 /* Body Styling */
 body {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
-    line-height: 1.6;
-    color: var(--text-primary);
-    padding: 10px;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    min-height: 100vh;
-    background-color: #0a0a0a;
-    background-image:
-        linear-gradient(rgba(10, 10, 10, 0.75), rgba(10, 10, 10, 0.75)), /* Darker overlay */
-        url('img/background.jpg');
-    background-size: cover;
-    background-position: center center;
-    background-repeat: no-repeat;
-    background-attachment: fixed;
+    line-height: 1.55; color: var(--text-primary); padding: 0;
+    -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale;
+    min-height: 100vh; background-color: var(--bg-color);
+    /* Optional: Add background image like second file if desired */
+    /* background-image: linear-gradient(rgba(10, 10, 10, 0.85), rgba(10, 10, 10, 0.85)), url('img/background.jpg');
+    background-size: cover; background-position: center; background-attachment: fixed; */
+    text-shadow: var(--text-shadow);
+}
+body.modal-open { overflow: hidden; }
+
+/* --- DASHBOARD LAYOUT GRID --- */
+.dashboard-container {
+    display: grid;
+    grid-template-columns: 1fr; /* Mobile default: single column */
+    grid-template-areas:
+        "header"
+        "actions"
+        "preview"
+        "main"
+        "footer";
+    gap: var(--grid-gap); padding: var(--grid-gap); max-width: 1400px; margin: 0 auto;
+}
+/* Tablet layout */
+@media (min-width: 768px) {
+    .dashboard-container {
+        grid-template-columns: repeat(3, 1fr);
+        grid-template-areas:
+            "header header header"
+            "actions actions actions"
+            "preview preview preview" /* Preview full width on tablet */
+            "main main main"
+            "footer footer footer";
+        --grid-gap: 18px; padding: 18px;
+    }
+}
+/* Desktop layout */
+@media (min-width: 1024px) {
+    .dashboard-container {
+        grid-template-columns: 1fr 2.5fr; /* Adjust ratio if needed, e.g., 1fr 3fr */
+        grid-template-rows: auto auto 1fr auto; /* Header, Actions, Content Row (auto height), Footer */
+        grid-template-areas:
+            "header header"        /* Span header across all columns */
+            "actions actions"    /* Span actions across all columns */
+            "preview main"         /* Preview | Main Grid */
+            "footer footer";       /* Span footer across all columns */
+         --grid-gap: 20px; padding: 20px;
+    }
+     /* Allow content row to grow */
+     .grid-area-preview, .grid-area-main-grid {
+         min-height: 0; /* Prevent blowout if content is short */
+     }
+     /* Ensure Preview doesn't collapse too much */
+     .grid-area-preview .preview-section {
+        min-height: 400px; /* Example minimum height */
+     }
+
 }
 
-body.modal-open {
-    overflow: hidden;
+/* Grid Area Assignments */
+.grid-area { min-width: 0; /* Prevent grid blowout */ }
+.grid-area-header { grid-area: header; }
+.grid-area-actions { grid-area: actions; }
+.grid-area-preview { grid-area: preview; }
+.grid-area-main-grid { grid-area: main; }
+.grid-area-footer { grid-area: footer; }
+
+/* --- CARD STYLING --- */
+.card-style {
+    background: rgba(255, 255, 255, 0.1); /* Transparent white */
+    backdrop-filter: blur(10px); /* Blur effect */
+    -webkit-backdrop-filter: blur(10px); /* Safari support */
+    border: 1px solid rgba(255, 255, 255, 0.2); /* Subtle border */
+    border-radius: var(--border-radius-cards); /* Consistent border radius */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3); /* Subtle shadow */
+    transition: all 0.3s ease;
+    display: flex; flex-direction: column;
+}
+/* Grid items don't need forced height */
+.grid-item.card-style { height: auto; }
+
+.grid-area-header .card-style:hover,
+.grid-area-actions .card-style:hover,
+.grid-area-preview .card-style:hover {
+     border-color: #444; /* Subtle hover effect */
 }
 
-/* Container */
-.container {
-    max-width: 1200px;
-    margin: 30px auto;
-    padding: 25px;
+/* --- Header Specific Styling --- */
+.grid-area-header .main-header {
+    padding: 15px 22px; border-bottom: none; display: flex;
+    justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;
 }
+.main-header h1 { font-size: 1.6em; margin: 0; border: none; font-weight: 600; }
+.main-header .subtitle { font-size: 0.9em; margin: 0; color: var(--text-secondary); }
 
-/* Header */
-.main-header {
-    text-align: left;
-    margin-bottom: 1.5em;
-    padding-bottom: 1.5em;
-    border-bottom: 2px solid var(--brand-orange);
-}
-.main-header h1 {
-    font-size: 2.3em;
-    margin-bottom: 0.2em;
-    font-weight: 700;
-    color: var(--text-primary);
-}
-.main-header .subtitle {
-    font-size: 1.15em;
-    color: var(--text-secondary);
-}
-
-/* --- Home Action Button Container --- */
+/* --- Actions Area Styling --- */
+.grid-area-actions .actions-container { padding: 15px 22px; align-items: center; text-align: center;}
 .home-action-button-container {
-    text-align: center;
-    margin-bottom: 0.5em; /* Reduced margin */
-    padding: 1em 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 20px;
-    flex-wrap: wrap;
+    display: flex; justify-content: center; align-items: center;
+    flex-wrap: wrap; gap: 15px; margin-bottom: 0.5em; padding: 0;
 }
-/* Target the paragraph immediately following the container */
-p.small-info.home-info { /* More specific selector */
-    font-size: 0.85em;
-    color: var(--text-muted);
-    margin-top: 0.5em; /* Adjusted top margin */
-    margin-bottom: 3em; /* Add margin below text */
-    text-align: center;
-    width: 100%; /* Ensure it takes full width */
+p.small-info.home-info { margin: 0.6em 0 0 0; font-size: 0.8em; color: var(--text-muted);}
+
+/* --- Preview Section Styling --- */
+.grid-area-preview .preview-section {
+    background: rgba(255, 255, 255, 0.1); /* Transparent white */
+    backdrop-filter: blur(10px); /* Blur effect */
+    -webkit-backdrop-filter: blur(10px); /* Safari support */
+    border: 1px solid rgba(255, 255, 255, 0.2); /* Subtle border */
+    border-radius: var(--border-radius-cards); /* Consistent border radius */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3); /* Subtle shadow */
+    padding: 18px 22px;
+    justify-content: flex-start; /* Align content to top */
+    /* Let flexbox handle height or set a min-height */
+    min-height: 400px; /* Example: ensure it has some height */
+}
+.preview-section .section-title {
+    font-size: 1.3em; margin-bottom: 1em; padding-bottom: 0.4em;
+    border-bottom: 1px solid var(--card-border); flex-shrink: 0; font-weight: 600;
+}
+.preview-container {
+    position: relative; width: 100%; max-width: 350px; /* Constrain width */
+    margin: 0 auto; padding: 0 40px; /* Keep space for buttons */
+    flex-grow: 1; display: flex; flex-direction: column;
+    justify-content: center; min-height: 300px; /* Min height for swiper area */
+}
+.swiper.preview-swiper {
+    width: 100%; height: 100%; /* Occupy available space */
+    min-height: 280px; /* Minimum slide height */
+    overflow: hidden; position: static; /* Let container position buttons */
+}
+.swiper.preview-swiper .swiper-wrapper { cursor: grab; }
+.swiper.preview-swiper .swiper-wrapper:active { cursor: grabbing; }
+
+.preview-swiper .swiper-slide {
+    background-color: #252525; border: 1px solid #383838;
+    border-radius: 10px; overflow: hidden;
+    display: flex; flex-direction: column;
+    transition: transform 0.4s ease;
+    /* Add a subtle inner shadow for depth */
+    box-shadow: inset 0 0 8px rgba(0,0,0,0.3);
+}
+.preview-swiper .slide-content { display: flex; flex-direction: column; height: 100%; }
+.preview-swiper .swiper-slide img {
+    display: block; width: 100%; height: 65%; /* Adjust image height */
+    object-fit: cover; flex-shrink: 0;
+    border-bottom: 1px solid #383838; /* Separator */
+    filter: grayscale(80%); /* Less intense grayscale */
+    transition: filter 0.4s ease;
+}
+.preview-swiper .swiper-slide:hover img { filter: grayscale(0%); }
+.preview-swiper .swiper-slide h4 {
+    font-size: 0.9em; font-weight: 600;
+    padding: 12px 15px; /* Slightly more padding */
+    color: var(--text-primary); line-height: 1.3; margin: 0;
+    flex-grow: 1; display: flex; align-items: center; justify-content: center;
+    text-align: center; transition: color 0.3s ease;
+    background-color: rgba(0,0,0,0.1); /* Slight background for text area */
+    text-shadow: var(--text-shadow); /* Add shadow */
+}
+.preview-swiper .swiper-slide:hover h4 { color: var(--brand-orange); }
+
+/* Swiper Navigation Buttons */
+.swiper-button-custom {
+    position: absolute; top: 50%; transform: translateY(-50%);
+    width: 34px; height: 34px;
+    background: linear-gradient(145deg, rgba(50, 50, 50, 0.8), rgba(25, 25, 25, 0.9));
+    border: 1px solid #404040; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; z-index: 10; transition: all 0.3s ease;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.4);
+    -webkit-backdrop-filter: blur(3px); backdrop-filter: blur(3px);
+    user-select: none; -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none;
+}
+.swiper-button-custom svg { width: 18px; height: 18px; fill: var(--brand-orange); transition: fill 0.3s ease, transform 0.3s ease; }
+.swiper-button-custom:hover { background: linear-gradient(145deg, rgba(60, 60, 60, 0.9), rgba(30, 30, 30, 1)); box-shadow: 0 3px 8px rgba(0,0,0,0.5); transform: translateY(-50%) scale(1.05); }
+.swiper-button-custom:hover svg { fill: var(--text-primary); transform: scale(1.1); }
+.swiper-button-custom:active { transform: translateY(-50%) scale(0.98); box-shadow: 0 1px 3px rgba(0,0,0,0.3); }
+.swiper-button-custom.preview-prev { left: 0px; }
+.swiper-button-custom.preview-next { right: 0px; }
+.swiper-button-custom::after { display: none; } /* Hide default swiper arrows if they appear */
+
+p.small-info.swipe-info {
+    font-size: 0.75em; /* Slightly larger */ color: var(--text-muted); text-align: center;
+    margin-top: 1em; /* Space above info text */
+    padding-top: 0.8em; flex-shrink: 0;
 }
 
-/* Portfolio Grid */
+/* --- Main Grid Area Styling --- */
+.grid-area-main-grid .section-title.all-works-title {
+    font-size: 1.3em; margin: 0 0 1em 0; padding: 0 0 0.4em 0;
+    border-bottom: 1px solid var(--card-border); font-weight: 600;
+}
 .portfolio-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
-    gap: 35px;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); /* Adjust minmax */
+    gap: var(--grid-gap); 
+    margin-top: 0;
+    background: rgba(255, 255, 255, 0.1); /* Transparent white */
+    backdrop-filter: blur(10px); /* Blur effect */
+    -webkit-backdrop-filter: blur(10px); /* Safari support */
+    border: 1px solid rgba(255, 255, 255, 0.2); /* Subtle border */
+    border-radius: var(--border-radius-cards); /* Rounded corners */
+    padding: 20px; /* Add padding inside the grid */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3); /* Subtle shadow */
 }
-.grid-item {
-    background-color: var(--glass-bg);
-    border: 1px solid var(--glass-border);
-    border-radius: 16px;
-    overflow: hidden;
-    cursor: pointer;
-    transition: all 0.35s cubic-bezier(0.25, 0.8, 0.25, 1);
-    display: flex;
-    flex-direction: column;
-    box-shadow: 0 6px 22px var(--glass-shadow);
-    -webkit-backdrop-filter: blur(14px);
-    backdrop-filter: blur(14px);
-    position: relative;
+.grid-item.card-style {
+    background-color: var(--card-bg); border: 1px solid var(--card-border);
+    border-radius: var(--border-radius-cards); overflow: hidden; cursor: pointer;
+    transition: all 0.3s ease; display: flex; flex-direction: column;
+    box-shadow: 0 3px 10px var(--card-shadow); padding: 0; /* Reset padding for grid items */
+    -webkit-backdrop-filter: none; backdrop-filter: none; /* Remove blur from grid items */
 }
-.grid-item:hover {
-    box-shadow: 0 12px 40px var(--shadow-color-strong), 0 0 18px var(--brand-orange-glow);
-    transform: translateY(-7px) scale(1.035);
+.grid-item.card-style:hover {
+    transform: translateY(-5px) scale(1.02); /* Slightly less lift */
+    box-shadow: 0 6px 15px rgba(0,0,0,0.3), 0 0 8px var(--brand-orange-glow); /* More prominent shadow */
     border-color: var(--brand-orange);
 }
-.grid-item img {
-    display: block;
-    width: 100%;
-    height: 210px;
-    object-fit: cover;
-    position: relative;
-    z-index: 0;
+.grid-item.card-style img {
+    display: block; width: 100%; height: 150px; /* Adjust height */
+    object-fit: cover; position: relative; z-index: 0;
+    filter: grayscale(80%); transition: filter 0.4s ease;
+    border-bottom: 1px solid var(--card-border);
 }
-.grid-item h4 {
-    font-size: 1.05em;
-    font-weight: 600;
-    padding: 20px 22px;
-    color: var(--text-primary);
-    line-height: 1.4;
-    margin: 0;
-    flex-grow: 1;
-    display: flex;
-    align-items: center;
-    position: relative;
-    z-index: 2;
-    transition: color 0.3s ease;
+.grid-item.card-style:hover img { filter: grayscale(0%); }
+.grid-item.card-style h4 {
+    font-size: 0.9em; font-weight: 600;
+    padding: 12px 15px; /* Consistent padding */
+    color: var(--text-primary); line-height: 1.35; margin: 0;
+    flex-grow: 1; display: flex; align-items: center;
+    position: relative; z-index: 2; transition: color 0.3s ease;
+    text-align: left;
+    background-color: rgba(0,0,0,0.1); /* Match swiper slide text background */
+    text-shadow: var(--text-shadow); /* Add shadow */
 }
-.grid-item:hover h4 {
-    color: var(--brand-orange);
+.grid-item.card-style:hover h4 { color: var(--brand-orange); }
+
+/* --- Footer Styling --- */
+.grid-area-footer footer {
+    text-align: center; margin-top: 1em; /* Reduced top margin */
+    padding: 1.5em 0 0.5em 0; /* Adjusted padding */
+    border-top: 1px solid var(--card-border);
+    font-size: 0.8em; color: var(--text-muted);
 }
 
-
-/* Footer */
-footer {
-    text-align: center;
-    margin-top: 5em;
-    padding-top: 2.5em;
-    border-top: 1px solid var(--glass-border);
-    font-size: 0.9em;
-    color: var(--text-muted);
-}
-
-/* Modal Styles */
+/* --- UNIFIED MODERN MODAL STYLES --- */
 .modal {
     position: fixed; inset: 0; display: none;
-    align-items: center; justify-content: center; z-index: 1000;
+    align-items: center; justify-content: center;
+    z-index: 1000; padding: 15px; /* Added padding */
 }
-.modal.is-visible { display: flex; animation: fadeIn 0.3s ease-out forwards; }
-@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+.modal.is-visible {
+    display: flex; animation: modalOverlayFadeIn 0.3s ease-out forwards;
+}
+@keyframes modalOverlayFadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes modalSlideInUp { from { opacity: 0; transform: translateY(25px) scale(0.98); } to { opacity: 1; transform: translateY(0) scale(1); } }
 
 .modal-overlay {
     position: absolute; inset: 0;
-    background-color: rgba(0, 0, 0, 0.9); cursor: pointer; z-index: 1001;
-    -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
+    background-color: rgba(0, 0, 0, 0.555); /* Darker overlay */
+    cursor: pointer; z-index: 1001;
+    -webkit-backdrop-filter: blur(5px); backdrop-filter: blur(5px);
 }
 .modal-content {
+    background: rgba(0, 0, 0, 0.637); /* Darker transparent black */
+    backdrop-filter: blur(50px); /* Blur effect */
+    -webkit-backdrop-filter: blur(14px); /* Safari support */
+    border: 1px solid rgba(255, 255, 255, 0.1); /* Subtle border */
+    border-radius: 12px;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.6); /* Stronger shadow */
     position: relative;
-    background-color: rgba(35, 35, 35, 0.9);
-    padding: 35px;
-    border-radius: 16px;
-    max-width: 850px; width: 90%; max-height: 90vh;
-    overflow-y: auto; z-index: 1002;
-    box-shadow: 0 15px 50px var(--shadow-color-strong);
-    border: 1px solid var(--glass-border);
-    border-top: 3px solid var(--brand-orange);
-    -webkit-backdrop-filter: blur(18px); backdrop-filter: blur(18px);
-    opacity: 0; transform: scale(0.95) translateY(10px);
-    animation: modalEnter 0.4s 0.1s cubic-bezier(0.165, 0.84, 0.44, 1) forwards;
+    padding: 25px 30px; /* Adjusted padding */
+    max-width: 750px; width: 100%; /* Slightly wider max-width */
+    max-height: 90vh; overflow-y: auto; z-index: 1002;
+    border-top: 3px solid var(--brand-orange); /* Accent border */
+    opacity: 0; transform: translateY(25px) scale(0.98);
 }
-@keyframes modalEnter { from { opacity: 0; transform: scale(0.95) translateY(10px); } to { opacity: 1; transform: scale(1) translateY(0); } }
-
+.modal.is-visible .modal-content {
+    animation: modalSlideInUp 0.35s 0.05s cubic-bezier(0.165, 0.84, 0.44, 1) forwards;
+}
 .modal-close {
-    position: absolute; top: 18px; right: 18px;
-    font-size: 1.8em; font-weight: 300; line-height: 1;
+    position: absolute; top: 12px; right: 12px;
+    font-size: 1.6em; font-weight: 400; line-height: 1;
     color: var(--text-secondary); background: rgba(0,0,0,0.3);
-    border: 1px solid var(--glass-border); border-radius: 50%;
-    width: 38px; height: 38px;
-    cursor: pointer; padding: 0; display: flex;
-    align-items: center; justify-content: center;
-    transition: all 0.25s ease-out;
+    border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 50%;
+    width: 32px; height: 32px; cursor: pointer; padding: 0;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.25s ease-out; z-index: 1003;
 }
 .modal-close:hover {
-    background-color: rgba(255, 255, 255, 0.1);
-    color: var(--text-primary);
-    transform: rotate(90deg) scale(1.05);
-    border-color: rgba(255, 255, 255, 0.3);
+    background-color: rgba(255, 255, 255, 0.15); color: var(--text-primary);
+    transform: rotate(90deg) scale(1.05); border-color: rgba(255, 255, 255, 0.3);
 }
 .modal-content h2 {
-    font-size: 1.9em; margin-top: 0; margin-bottom: 1.2em;
-    color: var(--text-primary); padding-right: 50px; font-weight: 700;
+    font-size: 1.5em; /* Adjusted title size */
+    margin-top: 0; margin-bottom: 1em; /* Adjusted margin */
+    color: var(--text-primary); padding-right: 40px; /* Space for close button */
+    font-weight: 600; line-height: 1.3;
+    text-shadow: var(--text-shadow); /* Add shadow */
 }
-.modal-body { /* No specific styles needed now */ }
+.modal-body { padding-top: 0.5em; }
 
+#purchase-options-modal .modal-content { max-width: 880px; } /* Wider purchase modal */
+#license-apply-modal .modal-content { max-width: 650px; } /* Specific width for license form */
 
-/* --- General Modal Button Styles --- */
-.modal-button {
-    display: inline-block;
-    margin: 5px;
-    font-weight: 700; text-decoration: none;
-    font-size: 1em;
-    padding: 10px 20px;
-    border: none; border-radius: 8px;
+/* Video/Embed Container Styles (inside modal) */
+#modal-video-container {
+    position: relative; width: 100%; max-width: 100%;
+    background: #000; margin-bottom: 1.5em; /* Adjusted margin */
+    border-radius: var(--modal-video-radius);
+    border: 1px solid var(--modal-border);
+    overflow: hidden; height: auto;
+}
+#modal-video-container.aspect-16-9 { height: 0; padding-bottom: 56.25%; }
+/* Specific style for Instagram Embeds */
+#modal-video-container.instagram-embed-container {
+    height: auto; max-height: 70vh; /* Limit height */
+    padding-bottom: 0; display: flex; justify-content: center;
+    align-items: center; background: #111; /* Give it a background */
+    min-height: 300px; /* Ensure it has some minimum size */
+}
+#modal-video-container.fixed-height {
+    height: auto; padding-bottom: 0; overflow: visible;
+    background: transparent; border: none;
+}
+
+#modal-video-container iframe { display: block; border: 0; border-radius: inherit; max-width: 100%; }
+#modal-video-container.aspect-16-9 iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
+#modal-video-container.instagram-embed-container iframe {
+    position: static; /* Let flexbox center it */
+    width: auto; max-width: 95%; /* Slightly smaller than container */
+    height: auto; max-height: 68vh; /* Slightly smaller than container */
+    margin: auto; border-radius: 6px; /* Add slight radius */
+    min-width: 300px; /* Minimum width */
+    min-height: 300px; /* Minimum height */
+    box-shadow: 0 0 15px rgba(0,0,0,0.5);
+}
+#modal-video-container.fixed-height iframe { position: static; width: 100%; height: inherit; border-radius: 8px; }
+
+#modal-details {}
+#modal-description { font-size: 0.9em; line-height: 1.6; color: var(--text-secondary); margin-bottom: 1em; }
+#modal-meta { font-size: 0.8em; color: var(--text-muted); margin-bottom: 0; padding-top: 0; border-top: none; line-height: 1.4; word-break: break-word; }
+.modal-actions { margin-top: 1.5em; padding-top: 1em; border-top: 1px solid var(--modal-border); display: flex; flex-wrap: wrap; gap: 10px; justify-content: flex-start; align-items: center; }
+
+/* --- Consistent Button Styles --- */
+.button-86 { /* Style for main action buttons */
+    display: inline-block; padding: 10px 18px; /* Adjusted padding */
+    font-size: 0.9em; font-weight: 700; color: #fff; /* White text */
+    background: linear-gradient(90deg, var(--brand-orange), var(--brand-orange-darker));
+    border: none; border-radius: 8px; /* Slightly rounder */
+    cursor: pointer; text-align: center; text-decoration: none;
     transition: all 0.3s ease;
-    cursor: pointer; text-align: center;
-    background-size: 200% auto; line-height: 1.4;
+    box-shadow: 0 3px 8px rgba(242, 153, 74, 0.25);
     vertical-align: middle;
 }
+.button-86:hover {
+    background: linear-gradient(90deg, var(--brand-orange-darker), var(--brand-orange));
+    box-shadow: 0 5px 12px rgba(242, 153, 74, 0.35);
+    transform: translateY(-2px);
+}
+.button-86:active { transform: translateY(0px); box-shadow: 0 2px 5px rgba(242, 153, 74, 0.2); }
+
+/* Modal Buttons */
+.modal-button {
+    display: inline-block; margin: 0; font-weight: 600;
+    text-decoration: none; font-size: 0.9em; padding: 10px 18px;
+    border: none; border-radius: 8px; transition: all 0.3s ease;
+    cursor: pointer; text-align: center; background-size: 200% auto;
+    line-height: 1.4; vertical-align: middle;
+}
 .modal-button:hover { transform: translateY(-2px); }
-
-/* Primary Button Style (Orange - Free License Submit) */
-.modal-button.primary {
+.modal-button.primary { /* For main modal actions like 'Generate' */
     background-image: linear-gradient(to right, var(--brand-orange-darker) 0%, var(--brand-orange) 50%, var(--brand-orange-darker) 100%);
-    color: #000;
-    box-shadow: 0 4px 10px rgba(255, 165, 0, 0.2);
+    color: #fff; box-shadow: 0 3px 8px rgba(242, 153, 74, 0.25);
 }
-.modal-button.primary:hover {
-    background-position: right center;
-    box-shadow: 0 8px 15px var(--brand-orange-glow);
-}
+.modal-button.primary:hover { background-position: right center; box-shadow: 0 5px 12px var(--brand-orange-glow); }
 
-/* Secondary Button Style (Subtle - Apply Free trigger) */
-.modal-button.secondary {
-    background-color: rgba(255, 255, 255, 0.08);
-    color: var(--text-secondary);
-    border: 1px solid var(--glass-border);
+.modal-button.secondary { /* For less prominent actions like 'View Source', 'Copy', 'Download' */
+    background-color: #383838; /* Darker grey */
+    color: var(--text-secondary); border: 1px solid #4f4f4f; /* Slightly lighter border */
     box-shadow: none;
 }
 .modal-button.secondary:hover {
-    background-color: rgba(255, 255, 255, 0.15);
-    border-color: var(--text-secondary);
-    color: var(--text-primary);
+    background-color: #454545; border-color: var(--text-secondary); color: var(--text-primary);
 }
 
-/* Purchase Button Style (Green) */
-.modal-button.purchase {
+.modal-button.purchase { /* For purchase card selection */
     background-image: linear-gradient(to right, var(--brand-green-darker) 0%, var(--brand-green) 50%, var(--brand-green-darker) 100%);
-    color: #fff;
-    box-shadow: 0 4px 10px var(--brand-green-glow);
+    color: #fff; box-shadow: 0 3px 8px var(--brand-green-glow);
 }
-.modal-button.purchase:hover {
-    background-position: right center;
-    box-shadow: 0 8px 15px rgba(40, 167, 69, 0.4);
-}
+.modal-button.purchase:hover { background-position: right center; box-shadow: 0 5px 12px rgba(39, 174, 96, 0.3); }
 
-/* Large Button Style (Home page buttons) */
-.modal-button.large {
-    padding: 12px 28px;
-    font-size: 1.05em;
-}
+.modal-button.small { padding: 8px 14px; font-size: 0.8em; border-radius: 6px;} /* Smaller buttons */
 
-/* Small Button Style (Inside license cards) */
-.modal-button.small {
-    padding: 8px 16px;
-    font-size: 0.9em;
-}
-
-/* Style for the external link (#modal-link) to look like a button */
-#modal-link {
-    display: inline-block;
-    margin: 5px;
-    color: var(--text-secondary);
-    font-weight: 600; text-decoration: none;
-    font-size: 1em;
-    padding: 10px 20px;
-    border: 1px solid var(--glass-border);
-    border-radius: 8px;
-    transition: all 0.3s ease;
-    background-color: rgba(255, 255, 255, 0.05);
-    vertical-align: middle;
-}
-#modal-link:hover {
-    transform: translateY(-2px);
-    background-color: rgba(255, 255, 255, 0.1);
-    color: var(--brand-orange);
-    border-color: var(--brand-orange);
-}
-
-/* Wrapper for buttons inside portfolio modal details */
-.modal-actions {
-    margin-top: 2em;
-    padding-top: 1.5em;
-    border-top: 1px solid var(--glass-border);
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    justify-content: flex-start;
-    align-items: center;
-}
+/* Ensure modal link takes secondary style */
+#modal-link.modal-button.secondary { margin: 0; }
 
 
-/* Video Container Styles */
-#modal-video-container {
-    position: relative;
-    height: 0; /* Controlled by padding or inline style */
-    overflow: hidden;
-    max-width: 100%;
-    background: #111;
-    margin-bottom: 2.5em;
-    border-radius: 12px;
-    border: 1px solid var(--glass-border);
-    /* display: none; /* JS will set to block when needed */
-}
-#modal-video-container.aspect-16-9 { padding-bottom: 56.25%; height: 0 !important; }
-#modal-video-container.aspect-1-1 { padding-bottom: 100%; height: 0 !important; }
-#modal-video-container.aspect-16-9 iframe,
-#modal-video-container.aspect-1-1 iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0; border-radius: inherit; }
-
-#modal-video-container.fixed-height {
-     height: auto; /* Allow JS to set height */
-     padding-bottom: 0; overflow: visible;
-     background: #111; border: 1px solid var(--glass-border); border-radius: 12px;
-}
-#modal-video-container.fixed-height iframe {
-    position: static; display: block; width: 100%; max-width: 100%;
-    height: inherit; /* Inherit height from container */
-    border-radius: inherit; border: 0;
-}
-
-
-/* Modal Details Text */
-#modal-details {
-    /* Container for description, meta, actions */
-}
-#modal-description {
-    font-size: 1em; line-height: 1.7; color: var(--text-secondary);
-    margin-bottom: 1.5em; /* Space below description */
-}
-#modal-meta {
-    font-size: 0.9em; color: var(--text-muted);
-    margin-bottom: 0; /* Reset margin, actions wrapper handles spacing */
-    padding-top: 0; border-top: none; /* Reset padding/border */
-}
-
-
-/* --- Styles for Purchase Options Modal --- */
-#purchase-options-modal .modal-content {
-    max-width: 980px;
-    background-color: rgba(20, 20, 20, 0.92);
-}
-#purchase-options-modal h2 {
-    font-size: 1.9em; text-align: center; margin-bottom: 0.5em;
-}
-#purchase-beat-info {
-    text-align: center; font-size: 1.1em; font-style: italic;
-    color: var(--text-secondary); margin-bottom: 2em;
-}
-
+/* --- Purchase/License Modals --- */
 .license-container {
+    display: flex; /* Use flexbox for layout */
+    justify-content: center; /* Center cards */
+    gap: 20px; /* Space between cards */
+    flex-wrap: wrap; /* Allow wrapping on smaller screens */
+    margin-top: 1em;
+}
+.license-card {
+    border: 1px solid #383838; background-color: #282828; /* Slightly darker card */
+    box-shadow: 0 4px 12px rgba(0,0,0,0.25); padding: 15px 20px; /* Adjusted padding */
+    border-radius: 10px; cursor: pointer; transition: all 0.3s ease;
+    flex: 1; /* Allow cards to grow */
+    min-width: 240px; /* Minimum width */
+    max-width: 280px; /* Maximum width */
+    display: flex; flex-direction: column; /* Stack content vertically */
+}
+.license-card:hover {
+    background-color: #303030;
+    box-shadow: 0 8px 20px var(--shadow-color-strong), 0 0 10px var(--brand-green-glow);
+    border-color: var(--brand-green);
+    transform: translateY(-4px);
+}
+.license-card h3 {
+    border-bottom: 1px solid #444; font-size: 1.2em; font-weight: 600;
+    text-align: center; padding-bottom: 0.6em; margin-bottom: 0.8em;
+    color: var(--brand-green); /* Use green for purchase titles */
+}
+.license-card p.price { font-size: 1.1em; font-weight: 700; margin-bottom: 0.8em; text-align: center; }
+.license-card p.price .negotiable { font-size: 0.75em; font-weight: normal; color: var(--text-muted); display: block; margin-top: 3px;}
+.license-card ul.features {
+    list-style: none; padding: 0 0 0 5px; margin-bottom: 1.2em;
+    font-size: 0.8em; color: var(--text-secondary); flex-grow: 1; /* Push button to bottom */
+}
+.license-card ul.features li { margin-bottom: 0.6em; padding-left: 1.1em; position: relative; }
+.license-card ul.features li::before { content: '✓'; position: absolute; left: 0; color: var(--brand-green); font-weight: bold; }
+.license-card .modal-button.small { margin-top: auto; width: 100%; } /* Button at bottom */
+#purchase-options-modal .small-info.purchase-footer-info { font-size: 0.8em; margin-top: 1.5em; text-align: center; color: var(--text-muted); }
+
+/* License Form Specifics */
+#license-apply-modal h2 { font-size: 1.4em; margin-bottom: 1.2em; font-weight: 600;}
+#license-form .form-group { margin-bottom: 1em; }
+#license-form label { font-size: 0.85em; margin-bottom: 0.3em; display: block; color: var(--text-secondary); font-weight: 500;}
+#license-form input[type="text"], #license-form input[type="email"] {
+    background-color: var(--input-bg); border: 1px solid var(--input-border);
+    padding: 10px 12px; font-size: 0.9em; border-radius: 6px; width: 100%; color: var(--text-primary);
+}
+#license-form input[readonly] { background-color: #202020; cursor: not-allowed; opacity: 0.8; }
+#license-form input[type="text"]:focus, #license-form input[type="email"]:focus {
+    background-color: #303030; border-color: var(--input-focus-border); outline: none; box-shadow: 0 0 0 2px var(--brand-orange-glow);
+}
+#license-form small { font-size: 0.75em; margin-top: 0.3em; display: block; color: var(--text-muted);}
+#license-form .agreement-box {
+    margin-top: 1.2em; padding-top: 0.8em; border-top: 1px solid var(--input-border);
+    display: flex; align-items: flex-start; /* Align checkbox top */
+}
+#license-form .agreement-box input[type="checkbox"] {
+    transform: scale(1.1); margin-right: 10px; margin-top: 0.2em; flex-shrink: 0; accent-color: var(--brand-orange);
+}
+#license-form .agreement-box label { font-size: 0.8em; line-height: 1.45; color: var(--text-secondary);}
+#license-form .agreement-box label a { color: var(--brand-orange); text-decoration: none; border-bottom: 1px dotted var(--brand-orange);}
+#license-form .agreement-box label a:hover { color: var(--brand-orange-darker); border-bottom-style: solid;}
+
+#license-terms-full {
+    max-height: 120px; /* Limit height */ border: 1px solid var(--input-border);
+    background: #1c1c1c; border-radius: 4px; padding: 8px 10px;
+    font-size: 0.75em; color: var(--text-secondary); white-space: pre-wrap; font-family: monospace;
+    margin: 0.5em 0 1em 0;
+}
+#license-form .form-actions { margin-top: 1.5em; display: flex; justify-content: center; gap: 12px; flex-wrap: wrap;}
+
+/* License Display Area Styling */
+#license-display-area { margin-top: 1.5em; border-top: 1px solid var(--modal-border); padding-top: 1em;}
+#license-display-area .license-display-title { font-weight: 600; margin-bottom: 0.5em; color: var(--text-secondary); font-size: 0.9em;}
+#license-form textarea#license-text-output {
+    background-color: #1c1c1c; border: 1px solid var(--input-border); color: var(--text-secondary);
+    font-family: monospace; padding: 10px; border-radius: 6px; resize: vertical;
+    width: 100%; font-size: 0.8em; margin-bottom: 0.8em; line-height: 1.5; min-height: 150px;
+}
+.license-copy-action { text-align: center; margin-bottom: 0.5em; }
+#copy-license-btn { display: inline-block; } /* Already styled as modal-button secondary */
+#license-display-area .copy-info { font-size: 0.75em; color: var(--text-muted); margin-top: 0.5em; text-align: center;}
+
+/* Error Message */
+.error-message { color: #ff8080; font-size: 0.85em; margin-top: 0.8em; text-align: center; font-weight: 500;}
+
+/* Ko-fi Widget - Keep as is */
+div[id^='kofi-widget-'] .kofi-button { border-color: var(--brand-orange) !important; }
+
+
+/* --- RESPONSIVE Refinements --- */
+@media (max-width: 1024px) { /* Tablet adjustments if needed beyond grid changes */
+    .grid-area-preview .preview-section { min-height: 350px; }
+    .portfolio-grid { grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); }
+}
+
+@media (max-width: 768px) { /* Smaller Tablet / Large Mobile */
+    .dashboard-container { --grid-gap: 12px; padding: 12px; }
+    .card-style { padding: 15px 18px; }
+    .main-header h1 { font-size: 1.4em;} .main-header .subtitle { font-size: 0.85em;}
+    .button-86, #modal-link, .modal-button { padding: 9px 15px; font-size: 0.85em; border-radius: 6px;}
+    .portfolio-grid { grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); }
+    .grid-item.card-style img { height: 130px; }
+    .modal-content { padding: 20px 25px; }
+    .modal-content h2 { font-size: 1.3em; }
+    .license-container { gap: 15px; }
+    .license-card { min-width: 220px; }
+}
+
+@media (max-width: 576px) { /* Small Mobile */
+    .dashboard-container { --grid-gap: 10px; padding: 10px; }
+    .card-style { padding: 12px 15px; border-radius: 10px; }
+    .main-header { flex-direction: column; align-items: flex-start; text-align: left;}
+    .main-header h1 { font-size: 1.3em;} .main-header .subtitle { font-size: 0.8em;}
+    .button-86, #modal-link, .modal-button { padding: 8px 14px; font-size: 0.8em; border-radius: 6px;}
+    .home-action-button-container { flex-direction: column; gap: 10px; align-items: stretch;}
+    .button-86 { width: 100%; } /* Stack buttons */
+
+    .preview-container { max-width: 100%; padding: 0 5px; min-height: 280px;}
+    .swiper.preview-swiper { width: calc(100% - 60px); height: 260px; margin: 0.5em auto 1em auto; min-height: 260px;}
+    .preview-swiper .swiper-slide img { height: 60%; } .preview-swiper .swiper-slide h4 { font-size: 0.8em; padding: 10px 12px; }
+    .swiper-button-custom { width: 30px; height: 30px; } .swiper-button-custom svg { width: 16px; height: 16px; }
+    .swiper-button-custom.preview-prev { left: 5px; } .swiper-button-custom.preview-next { right: 5px; }
+
+
+    .portfolio-grid { grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; } /* Smaller items */
+    .grid-item.card-style img { height: 120px; } .grid-item.card-style h4 { padding: 10px 12px; font-size: 0.8em;}
+
+    .modal { padding: 10px; }
+    .modal-content { padding: 15px 18px; border-radius: 10px; }
+    .modal-close { top: 8px; right: 8px; width: 30px; height: 30px; font-size: 1.4em; }
+    .modal-content h2 { font-size: 1.2em; }
+    .modal-actions { flex-direction: column; align-items: stretch; gap: 8px; }
+    #modal-link, .modal-actions .button-86, .modal-actions .modal-button { width: 100%; margin: 0; text-align: center; }
+
+    .license-container { flex-direction: column; align-items: center; gap: 12px; }
+    .license-card { width: 100%; max-width: 300px; padding: 12px 15px;} /* Limit width on small screens */
+    #license-apply-modal .modal-content { padding: 15px; } #license-apply-modal h2 { font-size: 1.2em; }
+    #license-form input[type="text"] { padding: 9px 10px; font-size: 0.85em; }
+    #license-form .agreement-box label { font-size: 0.75em; }
+    #license-form textarea#license-text-output { font-size: 0.75em; padding: 8px;}
+    #modal-video-container.instagram-embed-container iframe { min-width: 280px; min-height: 280px; max-width: 98%; max-height: 65vh; }
+
+    .video-background-container {
+        height: 100%; /* Adjust height to fill the screen */
+        aspect-ratio: auto; /* Disable fixed aspect ratio */
+    }
+
+    .video-background-container iframe {
+        width: auto; /* Allow width to adjust */
+        height: auto; /* Allow height to adjust */
+        min-width: 100%; /* Ensure it fills horizontally */
+        min-height: 100%; /* Ensure it fills vertically */
+        object-fit: cover; /* Zoom and crop to maintain aspect ratio */
+    }
+}
+
+/* Video Background Styling */
+.video-background-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%; /* Fill the container */
+    overflow: hidden;
+    z-index: -1; /* Place behind other content */
+}
+
+.video-background-container iframe {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Resize and crop to fill the container */
+    pointer-events: none; /* Prevent interaction with the video */
+    border: none;
+}
+
+/* --- Styling specific for Instagram Embed Container --- */
+#modal-video-container.instagram-embed-container {
+    display: flex; /* Center content */
+    flex-direction: column; /* Stack iframe and fallback text */
+    justify-content: center;
+    align-items: center;
+    background-color: #111; /* Dark background */
+    min-height: 350px;
+    max-height: 75vh;
+    padding: 15px;
+    height: auto;
+    padding-bottom: 0;
+    overflow: hidden;
+}
+
+/* Styling for the Instagram iframe itself */
+#modal-video-container.instagram-embed-container .instagram-iframe {
+    display: block;
+    border: none;
+    max-width: 100%;
+    width: 500px;
+    max-height: calc(75vh - 60px);
+    min-height: 300px;
+    border-radius: 8px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4);
+    background-color: #222;
+    order: 1;
+}
+
+/* --- Styling specific for Instagram Embed Container --- */
+#modal-video-container.instagram-embed-container {
+    display: flex; /* Use Flexbox for centering */
+    flex-direction: column; /* Stack iframe and fallback text */
+    justify-content: center; /* Center vertically */
+    align-items: center; /* Center horizontally */
+    background-color: #111; /* Dark background while loading/if failed */
+    min-height: 350px; /* Minimum height */
+    max-height: 75vh; /* Limit maximum height */
+    padding: 15px; /* Padding around content */
+    height: auto; /* Override fixed height/padding-bottom */
+    padding-bottom: 0;
+    overflow: hidden; /* Hide potential overflow from iframe */
+}
+
+/* Styling for the Instagram iframe itself */
+#modal-video-container.instagram-embed-container .instagram-iframe {
+    display: block; /* Ensure it's a block element */
+    border: none; /* Remove default border */
+    max-width: 100%; /* Prevent exceeding container width */
+    width: 500px; /* Set a reasonable max-width */
+    max-height: calc(75vh - 60px); /* Max height considering padding and fallback text */
+    min-height: 300px; /* Minimum display height */
+    border-radius: 8px; /* Rounded corners */
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4); /* Add shadow */
+    background-color: #222; /* Background in case content is slow */
+    order: 1; /* Ensure iframe comes first visually */
+}
+
+/* Styling for the Fallback Text/Link */
+#modal-video-container.instagram-embed-container .instagram-fallback {
+    font-size: 0.8em;
+    color: var(--text-muted);
+    text-align: center;
+    margin-top: 15px; /* Space between iframe and fallback */
+    line-height: 1.4;
+    max-width: 90%;
+    order: 2; /* Ensure fallback comes after iframe visually */
+}
+
+#modal-video-container.instagram-embed-container .instagram-fallback-link {
+    color: var(--brand-orange);
+    text-decoration: underline;
+    font-weight: 500;
+}
+
+#modal-video-container.instagram-embed-container .instagram-fallback-link:hover {
+    color: var(--brand-orange-darker);
+    text-decoration: none;
+}
+
+/* --- Ensure other aspect ratio classes don't interfere --- */
+/* Reset padding-bottom if it was set by other types */
+#modal-video-container.instagram-embed-container {
+    padding-bottom: 0 !important;
+}
+/* Iframe inside IG container should not be absolute */
+#modal-video-container.instagram-embed-container iframe {
+    position: static !important;
+    width: auto; /* Let max-width control it */
+    height: auto; /* Let max-height control it */
+}
+
+/* Wrapper for Instagram embed with play button */
+.instagram-embed-wrapper {
+    position: relative;
     display: flex;
     justify-content: center;
-    gap: 30px;
-    margin-top: 1.5em;
-    flex-wrap: wrap;
+    align-items: center;
+    width: 100%;
+    height: 100%;
 }
 
-.license-card {
-    border: 1px solid var(--glass-border);
-    padding: 20px 25px;
-    border-radius: 12px;
-    cursor: pointer;
-    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-    background-color: rgba(40, 40, 40, 0.7);
-    -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-    text-align: left;
-    flex: 1;
-    min-width: 260px;
-    max-width: 300px;
-    display: flex;
-    flex-direction: column;
-}
-
-.license-card:hover {
-    background-color: rgba(50, 50, 50, 0.8);
-    transform: translateY(-6px) scale(1.03);
-    box-shadow: 0 12px 30px var(--shadow-color-strong), 0 0 12px var(--brand-green-glow);
-    border-color: var(--brand-green);
-}
-
-.license-card h3 {
-    font-size: 1.3em;
-    margin-bottom: 0.6em;
-    color: var(--brand-green);
-    text-align: center;
-    border-bottom: 1px solid var(--glass-border);
-    padding-bottom: 0.6em;
-}
-
-.license-card p.price {
-    font-size: 1.2em;
-    font-weight: bold;
-    margin-bottom: 1.2em;
-    text-align: center;
-    color: var(--text-primary);
-}
-.license-card p.price .negotiable {
-    font-size: 0.7em; font-weight: normal; color: var(--text-secondary); display: block; margin-top: 2px;
-}
-
-.license-card ul.features {
-    list-style: none; padding: 0; margin-bottom: 1.5em;
-    font-size: 0.9em; color: var(--text-secondary); flex-grow: 1;
-}
-.license-card ul.features li {
-    margin-bottom: 0.7em; padding-left: 1.3em; position: relative;
-}
-.license-card ul.features li::before {
-    content: '✓'; position: absolute; left: 0;
-    color: var(--brand-green); font-weight: bold;
-}
-
-.license-card button.modal-button.small {
-    display: block; width: 100%; margin-top: auto;
-}
-#purchase-options-modal .small-info { /* Target info text inside purchase modal */
-    text-align: center;
-    margin-top: 2em;
-    font-size: 0.85em;
-    color: var(--text-muted);
-}
-/* --- End Purchase Modal Styles --- */
-
-
-/* Ko-fi Widget Styles */
-/* ... (same as before) ... */
-div[id^='kofi-widget-'] .kofi-button { background-color: transparent !important; border: 1px solid var(--brand-orange) !important; color: var(--brand-orange) !important; transition: all 0.3s ease !important; border-radius: 8px !important; }
-div[id^='kofi-widget-'] .kofi-button:hover { background-color: var(--brand-orange-glow) !important; color: var(--text-primary) !important; border-color: var(--brand-orange) !important; }
-
-/* Free License Form Styles */
-#license-apply-modal .modal-content { max-width: 650px; }
-#license-apply-modal h2 { font-size: 1.8em; margin-bottom: 1.5em; }
-#license-form .form-group { margin-bottom: 1.5em; }
-#license-form label { display: block; margin-bottom: 0.5em; font-weight: 600; color: var(--text-secondary); font-size: 0.95em; }
-#license-form input[type="text"], #license-form input[type="email"] { width: 100%; padding: 12px 15px; border-radius: 8px; border: 1px solid var(--glass-border); background-color: rgba(0, 0, 0, 0.2); color: var(--text-primary); font-size: 1em; transition: border-color 0.3s ease, background-color 0.3s ease; }
-#license-form input[type="text"]:focus, #license-form input[type="email"]:focus { outline: none; border-color: var(--brand-orange); background-color: rgba(0, 0, 0, 0.3); }
-#license-form input[readonly] { background-color: rgba(0, 0, 0, 0.1); cursor: not-allowed; opacity: 0.7; }
-#license-form input::placeholder { color: var(--text-muted); opacity: 0.7; }
-#license-form input:focus::placeholder { opacity: 0.5; }
-#license-form small { display: block; font-size: 0.8em; color: var(--text-muted); margin-top: 0.4em; }
-#license-form .agreement-box { margin-top: 2em; padding-top: 1.5em; border-top: 1px solid var(--glass-border); display: flex; align-items: flex-start; }
-#license-form .agreement-box input[type="checkbox"] { margin-right: 10px; margin-top: 4px; transform: scale(1.2); accent-color: var(--brand-orange); cursor: pointer; }
-#license-form .agreement-box label { display: inline; font-weight: normal; font-size: 0.9em; color: var(--text-secondary); }
-#license-form .agreement-box label a { color: var(--brand-orange); text-decoration: underline; cursor: pointer; }
-#license-form .agreement-box label a:hover { color: var(--brand-orange-darker); }
-#license-form .form-actions { margin-top: 2.5em; text-align: center; }
-.error-message { font-size: 0.9em; font-weight: bold; text-align: center; color: #ff6b6b; margin-top: 10px; }
-
-/* Tambahkan gaya untuk button */
-.button-86 {
-    display: inline-block;
-    padding: 12px 24px;
-    font-size: 1em;
-    font-weight: bold;
+/* Play button styling */
+.instagram-play-button {
+    position: absolute;
+    z-index: 2;
+    background-color: rgba(0, 0, 0, 0.6);
     color: #fff;
-    background: linear-gradient(90deg, #ff7e5f, #feb47b);
+    font-size: 2em;
     border: none;
-    border-radius: 8px;
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     cursor: pointer;
-    text-align: center;
-    text-decoration: none;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 10px rgba(255, 126, 95, 0.3);
+    transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
-.button-86:hover {
-    background: linear-gradient(90deg, #feb47b, #ff7e5f);
-    box-shadow: 0 8px 15px rgba(255, 126, 95, 0.5);
-    transform: translateY(-2px);
+.instagram-play-button:hover {
+    background-color: rgba(0, 0, 0, 0.8);
+    transform: scale(1.1);
 }
 
-.button-86:active {
-    transform: translateY(1px);
-    box-shadow: 0 4px 10px rgba(255, 126, 95, 0.3);
+.instagram-play-button:active {
+    transform: scale(0.95);
 }
 
-/* Responsive Adjustments */
-@media (max-width: 768px) {
-    .modal-content { padding: 25px; width: 92%; }
-    .modal-content h2 { font-size: 1.6em; }
-    .portfolio-grid { grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 25px; }
-    .grid-item img { height: 180px; }
-    .home-action-button-container { gap: 15px; }
-    #purchase-options-modal .modal-content { max-width: 90%; }
-    .license-container { gap: 20px; justify-content: center; }
-    .license-card { min-width: 220px; max-width: 280px; }
+/* Ensure iframe is below the play button initially */
+.instagram-embed-wrapper iframe {
+    pointer-events: none; /* Disable interaction until play button is clicked */
 }
 
-@media (max-width: 600px) {
-    body { padding: 5px; }
-    .container { margin: 20px auto; padding: 15px; }
-    .portfolio-grid { grid-template-columns: 1fr; gap: 20px; }
-    .grid-item img { height: 200px; }
-    .grid-item h4 { font-size: 1em; padding: 18px 20px; }
-    .main-header h1 { font-size: 1.9em; }
-    .main-header .subtitle { font-size: 1.05em; }
-    .modal-content { padding: 25px 20px; width: 95%; max-height: 88vh; }
-    .modal-close { top: 15px; right: 15px; width: 36px; height: 36px; font-size: 1.8em; }
-    .modal-content h2 { font-size: 1.6em; }
-    .home-action-button-container { flex-direction: column; gap: 15px; }
-    p.small-info.home-info { margin-bottom: 2em;}
-    .modal-button.large { padding: 12px 25px; font-size: 1em; }
-    .modal-actions { flex-direction: column; align-items: stretch; }
-    #modal-link, .modal-actions .modal-button { width: 100%; margin: 0 0 10px 0; text-align: center; }
-     .modal-actions .modal-button:last-child { margin-bottom: 0; }
-    #purchase-options-modal .modal-content { padding: 25px 15px; }
-    .license-container { flex-direction: column; align-items: center; gap: 20px; }
-    .license-card { width: 90%; max-width: none; }
-    /* License Form Responsive */
-    #license-apply-modal .modal-content { padding: 25px 15px; }
-    #license-apply-modal h2 { font-size: 1.5em; }
-    #license-form .form-group { margin-bottom: 1.2em; }
-    #license-form input[type="text"] { padding: 10px 12px; }
-    #license-form .agreement-box label { font-size: 0.85em; }
-}
 /* END OF FILE style.css */
