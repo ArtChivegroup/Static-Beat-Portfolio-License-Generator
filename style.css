@@ -1,14 +1,14 @@
-/* START OF FILE style.css */
-/* Styles from the FIRST file (modern design) */
-
+/* START OF FILE: style.css */
 /* Basic Reset */
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
 /* Variables */
 :root {
     --bg-color: #101010;
-    --card-bg: #1a1a1a;
+    --card-bg: #1a1a1a; /* Slightly lighter card background */
+    --card-bg-alpha: rgba(26, 26, 26, 0.8); /* Alpha for backdrop */
     --card-border: #2c2c2c;
+    --card-border-alpha: rgba(255, 255, 255, 0.15);
     --card-shadow: rgba(0, 0, 0, 0.15);
     --text-primary: #ffffff; /* Bright white */
     --text-secondary: #f0f0f0; /* Slightly dimmer white */
@@ -19,7 +19,8 @@
     --brand-green: #27AE60; --brand-green-darker: #219653;
     --brand-green-glow: rgba(39, 174, 96, 0.2);
     --shadow-color-strong: rgba(0, 0, 0, 0.4);
-    --modal-bg: #222222;
+    --modal-bg: #222222; /* Solid color for modal bg */
+    --modal-bg-alpha: rgba(34, 34, 34, 0.9); /* Alpha for backdrop effect */
     --modal-border: #383838;
     --modal-shadow: rgba(0, 0, 0, 0.45);
     --modal-video-radius: 10px;
@@ -28,23 +29,50 @@
     --input-bg: #252525;
     --input-border: #404040;
     --input-focus-border: var(--brand-orange);
-    --text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8); /* Subtle shadow */
+    --text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6); /* Slightly stronger shadow */
 }
 
 /* Body Styling */
+html { scroll-behavior: smooth; }
 body {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
     line-height: 1.55; color: var(--text-primary); padding: 0;
     -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale;
-    min-height: 100vh; background-color: var(--bg-color);
-    /* Optional: Add background image like second file if desired */
-    /* background-image: linear-gradient(rgba(10, 10, 10, 0.85), rgba(10, 10, 10, 0.85)), url('img/background.jpg');
-    background-size: cover; background-position: center; background-attachment: fixed; */
+    min-height: 100vh; background-color: var(--bg-color); /* Fallback bg */
     text-shadow: var(--text-shadow);
+    position: relative; /* Needed for fixed video background containment */
+    overflow-x: hidden; /* Prevent horizontal scroll */
 }
-body.modal-open { overflow: hidden; }
+body.modal-open { overflow-y: hidden; } /* Only hide vertical scroll */
 
-/* --- DASHBOARD LAYOUT GRID --- */
+/* --- VIDEO BACKGROUND --- */
+.video-background-container {
+    position: fixed; /* Pastikan container tetap di posisi tetap */
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden; /* Sembunyikan bagian yang keluar */
+    z-index: -1; /* Pastikan di belakang konten lain */
+    background-color: #000; /* Warna fallback */
+}
+
+.video-background-container iframe {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    /* Ukuran minimum agar video selalu memenuhi layar */
+    min-width: 100%;
+    min-height: 100%;
+    transform: translate(-50%, -50%) scale(1.3); /* Zoom video by 30% */
+    object-fit: cover; /* Mengisi container dengan menjaga aspect ratio */
+    pointer-events: none; /* Nonaktifkan interaksi pada video */
+    border: none;
+    opacity: 0.6; /* Opsional: untuk mengurangi kecerahan video */
+}
+
+
+/* --- DASHBOARD LAYOUT GRID (INDEX PAGE) --- */
 .dashboard-container {
     display: grid;
     grid-template-columns: 1fr; /* Mobile default: single column */
@@ -55,6 +83,8 @@ body.modal-open { overflow: hidden; }
         "main"
         "footer";
     gap: var(--grid-gap); padding: var(--grid-gap); max-width: 1400px; margin: 0 auto;
+    position: relative; /* To ensure content is above video background */
+    z-index: 1;
 }
 /* Tablet layout */
 @media (min-width: 768px) {
@@ -69,64 +99,122 @@ body.modal-open { overflow: hidden; }
         --grid-gap: 18px; padding: 18px;
     }
 }
-/* Desktop layout */
+/* --- Desktop layout --- */
 @media (min-width: 1024px) {
     .dashboard-container {
-        grid-template-columns: 1fr 2.5fr; /* Adjust ratio if needed, e.g., 1fr 3fr */
-        grid-template-rows: auto auto 1fr auto; /* Header, Actions, Content Row (auto height), Footer */
+        grid-template-columns: 1fr 2.5fr; /* Adjust column ratio if needed */
+        grid-template-rows: auto auto 1fr auto;
         grid-template-areas:
-            "header header"        /* Span header across all columns */
-            "actions actions"    /* Span actions across all columns */
-            "preview main"         /* Preview | Main Grid */
-            "footer footer";       /* Span footer across all columns */
+            "header header"
+            "actions actions"
+            "preview main" /* Preview on left, main on right */
+            "footer footer";
          --grid-gap: 20px; padding: 20px;
+         /* Ensure the row containing preview and main can stretch */
+         grid-template-rows: auto auto minmax(0, auto) auto; /* Allow row 3 to grow */
     }
-     /* Allow content row to grow */
+     /* Allow content row's grid areas to grow */
      .grid-area-preview, .grid-area-main-grid {
-         min-height: 0; /* Prevent blowout if content is short */
+         min-height: 0; /* Override potential fixed heights */
+         display: flex; /* Use flex to manage internal stretching */
+         flex-direction: column;
      }
-     /* Ensure Preview doesn't collapse too much */
+     /* Allow the main content sections inside to grow */
      .grid-area-preview .preview-section {
-        min-height: 400px; /* Example minimum height */
+         flex-grow: 0; /* Preview usually has fixed/max height */
      }
+     .grid-area-main-grid .portfolio-grid {
+         flex-grow: 1; /* Allow main grid to take available space */
+         display: flex; /* Use flex for the portfolio grid container */
+         flex-direction: column; /* Stack title and grid vertically */
+     }
+     /* Minimum height for visual consistency */
+     .grid-area-preview .preview-section { min-height: 450px; } /* Increased slightly for square */
+     .grid-area-main-grid .portfolio-grid { min-height: 450px; } /* Increased slightly */
 
+     /* --- Floating Preview Section (Desktop Only) --- */
+     .grid-area-preview .preview-section.card-style {
+        position: sticky; /* Make it float */
+        top: 20px; /* Adjust vertical offset from top */
+        z-index: 10; /* Ensure it stays on top of sibling grid content */
+        /* Re-apply visual styles needed for floating element */
+        background: var(--card-bg-alpha);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border: 1px solid var(--card-border-alpha);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.35);
+        /* max-height needed to prevent stretching too much when sticky */
+        max-height: calc(100vh - 40px); /* Example: viewport height minus top offset and some padding */
+        overflow-y: auto; /* Allow internal scrolling if content exceeds max-height */
+     }
 }
 
 /* Grid Area Assignments */
 .grid-area { min-width: 0; /* Prevent grid blowout */ }
-.grid-area-header { grid-area: header; }
+.grid-area-header { grid-area: header; background: transparent; /* Make header transparent */ }
 .grid-area-actions { grid-area: actions; }
-.grid-area-preview { grid-area: preview; }
+.grid-area-preview { grid-area: preview; background: transparent; /* Make preview transparent */ }
 .grid-area-main-grid { grid-area: main; }
 .grid-area-footer { grid-area: footer; }
 
-/* --- CARD STYLING --- */
+/* --- CARD STYLING (INDEX PAGE) --- */
 .card-style {
-    background: rgba(255, 255, 255, 0.1); /* Transparent white */
-    backdrop-filter: blur(10px); /* Blur effect */
-    -webkit-backdrop-filter: blur(10px); /* Safari support */
-    border: 1px solid rgba(255, 255, 255, 0.2); /* Subtle border */
+    background: var(--card-bg-alpha); /* Base card background */
+    backdrop-filter: blur(12px); /* Blur effect */
+    -webkit-backdrop-filter: blur(12px); /* Safari support */
+    border: 1px solid var(--card-border-alpha); /* Subtle border */
     border-radius: var(--border-radius-cards); /* Consistent border radius */
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3); /* Subtle shadow */
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.35); /* Slightly stronger shadow */
     transition: all 0.3s ease;
     display: flex; flex-direction: column;
+    padding: 18px 22px; /* Default padding */
 }
-/* Grid items don't need forced height */
-.grid-item.card-style { height: auto; }
+/* Grid items don't need forced height or the container padding */
+.grid-item.card-style {
+    height: auto;
+    padding: 0; /* Reset padding for items holding image/text */
+    /* Apply Glassmorphism specifically to grid items */
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
+    overflow: hidden;
+    cursor: pointer;
+}
 
 .grid-area-header .card-style:hover,
 .grid-area-actions .card-style:hover,
-.grid-area-preview .card-style:hover {
-     border-color: #444; /* Subtle hover effect */
+.grid-area-preview .preview-section.card-style:hover { /* Hover for non-grid cards */
+     border-color: rgba(255, 255, 255, 0.25); /* Subtle hover effect */
 }
+/* Specific hover for grid items */
+.grid-item.card-style:hover {
+     transform: translateY(-5px) scale(1.02);
+     box-shadow: 0 6px 15px rgba(0,0,0,0.3), 0 0 8px var(--brand-orange-glow);
+     border-color: var(--brand-orange);
+     /* Make background slightly more opaque on hover if desired */
+     /* background: rgba(255, 255, 255, 0.15); */
+}
+/* Hover for the container holding the grid items (less pronounced) */
+.grid-area-main-grid .portfolio-grid.card-style:hover {
+     /* No visual change needed as it has no background */
+     border-color: rgba(255, 255, 255, 0.20); /* Optional: Slight border highlight on container hover */
+}
+
 
 /* --- Header Specific Styling --- */
 .grid-area-header .main-header {
     padding: 15px 22px; border-bottom: none; display: flex;
-    justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;
+    justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;
 }
-.main-header h1 { font-size: 1.6em; margin: 0; border: none; font-weight: 600; }
-.main-header .subtitle { font-size: 0.9em; margin: 0; color: var(--text-secondary); }
+.main-header .header-text { flex-grow: 1; }
+.main-header h1 { font-size: 1.6em; margin: 0; border: none; font-weight: 600; line-height: 1.2; }
+.main-header .subtitle { font-size: 0.9em; margin: 0.1em 0 0 0; color: var(--text-secondary); }
+#site-logo {
+    max-height: 45px; width: auto; vertical-align: middle;
+    flex-shrink: 0; /* Don't let logo shrink */
+}
 
 /* --- Actions Area Styling --- */
 .grid-area-actions .actions-container { padding: 15px 22px; align-items: center; text-align: center;}
@@ -138,66 +226,182 @@ p.small-info.home-info { margin: 0.6em 0 0 0; font-size: 0.8em; color: var(--tex
 
 /* --- Preview Section Styling --- */
 .grid-area-preview .preview-section {
-    background: rgba(255, 255, 255, 0.1); /* Transparent white */
-    backdrop-filter: blur(10px); /* Blur effect */
-    -webkit-backdrop-filter: blur(10px); /* Safari support */
-    border: 1px solid rgba(255, 255, 255, 0.2); /* Subtle border */
-    border-radius: var(--border-radius-cards); /* Consistent border radius */
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3); /* Subtle shadow */
-    padding: 18px 22px;
     justify-content: flex-start; /* Align content to top */
-    /* Let flexbox handle height or set a min-height */
-    min-height: 400px; /* Example: ensure it has some height */
+    flex-grow: 0; /* Prevent excessive vertical growth */
+    min-height: 320px; /* Minimum height - Adjust if needed */
+    max-height: 450px; /* Limit height - Adjust if needed */
+    overflow: hidden; /* Prevent content overflow */
+    position: static; /* Default positioning */
 }
-.preview-section .section-title {
-    font-size: 1.3em; margin-bottom: 1em; padding-bottom: 0.4em;
-    border-bottom: 1px solid var(--card-border); flex-shrink: 0; font-weight: 600;
-}
-.preview-container {
-    position: relative; width: 100%; max-width: 350px; /* Constrain width */
-    margin: 0 auto; padding: 0 40px; /* Keep space for buttons */
-    flex-grow: 1; display: flex; flex-direction: column;
-    justify-content: center; min-height: 300px; /* Min height for swiper area */
-}
-.swiper.preview-swiper {
-    width: 100%; height: 100%; /* Occupy available space */
-    min-height: 280px; /* Minimum slide height */
-    overflow: hidden; position: static; /* Let container position buttons */
-}
-.swiper.preview-swiper .swiper-wrapper { cursor: grab; }
-.swiper.preview-swiper .swiper-wrapper:active { cursor: grabbing; }
 
+.preview-section .section-title {
+    font-size: 1.3em;
+    margin-bottom: 1em;
+    padding-bottom: 0.4em;
+    border-bottom: 1px solid var(--card-border);
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+/* --- Thumbnail Container Styling --- */
+.preview-container {
+    position: relative;
+    width: 100%;
+    max-width: 380px; /* Slightly wider to accommodate square + padding */
+    margin: 0 auto;
+    padding: 0 40px; /* Space for buttons */
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-height: 320px; /* Minimum swiper area height - adjust as needed */
+}
+
+/* --- Thumbnail Title Styling (NOW BELOW IMAGE) --- */
+.preview-container .swiper-slide h4 {
+    position: static; /* Changed from absolute */
+    background: var(--card-bg); /* Solid background */
+    color: var(--text-primary);
+    padding: 10px 12px; /* Adjusted padding */
+    /* border-radius: 0; /* Reset radius */
+    /* Apply bottom radius to match slide */
+    border-bottom-left-radius: 10px; /* Match slide's border-radius */
+    border-bottom-right-radius: 10px;
+    font-size: 0.9em; /* Adjusted size */
+    font-weight: 600;
+    max-width: 100%; /* Ensure it fits */
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    margin: 0; /* Remove default margins */
+    line-height: 1.4;
+    text-align: left;
+    transition: color 0.3s ease;
+    text-shadow: none; /* Remove text shadow for solid background */
+    border-top: 1px solid var(--card-border); /* Add separator line */
+    flex-shrink: 0; /* Prevent shrinking */
+}
+
+/* Remove old overlay styles */
+/*
+.preview-container .swiper-slide h4 {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background: rgba(0, 0, 0, 0.65);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    color: var(--text-primary);
+    padding: 6px 10px;
+    border-radius: 5px;
+    font-size: 0.85em;
+    font-weight: 600;
+    z-index: 2;
+    max-width: calc(100% - 20px);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+    margin: 0;
+    line-height: 1.3;
+    text-align: left;
+    transition: color 0.3s ease;
+    text-shadow: var(--text-shadow);
+}
+*/
+
+/* Hover effect for the new title placement */
+.preview-container .swiper-slide:hover h4 {
+    color: var(--brand-orange); /* Hover effect */
+}
+
+/* --- Swiper Container --- */
+.swiper.preview-swiper {
+    width: 100%;
+    height: auto; /* Allow height to be determined by content */
+    min-height: 320px; /* Match container min-height */
+    overflow: hidden;
+    position: static;
+}
+
+.swiper.preview-swiper .swiper-wrapper {
+    cursor: grab;
+    align-items: stretch; /* Stretch slides vertically if needed, or use 'flex-start' */
+}
+
+.swiper.preview-swiper .swiper-wrapper:active {
+    cursor: grabbing;
+}
+
+/* --- Swiper Slide (Thumbnail Box) --- */
 .preview-swiper .swiper-slide {
-    background-color: #252525; border: 1px solid #383838;
-    border-radius: 10px; overflow: hidden;
-    display: flex; flex-direction: column;
-    transition: transform 0.4s ease;
-    /* Add a subtle inner shadow for depth */
-    box-shadow: inset 0 0 8px rgba(0,0,0,0.3);
+    background-color: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 10px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column; /* Stack image and title */
+    transition: transform 0.4s ease, box-shadow 0.4s ease, border-color 0.4s ease;
+    box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.3);
+    min-height: 320px; /* Minimum height */
+    height: auto; /* Allow natural height based on content */
+    cursor: pointer;
+    position: relative;
 }
-.preview-swiper .slide-content { display: flex; flex-direction: column; height: 100%; }
+
+/* --- Ensure Slide Content Fills Space (Removed - handled by flex column on slide) --- */
+/* .preview-swiper .slide-content { ... } */
+
+/* --- Centering and Resizing Thumbnail Images (NOW SQUARE) --- */
 .preview-swiper .swiper-slide img {
-    display: block; width: 100%; height: 65%; /* Adjust image height */
-    object-fit: cover; flex-shrink: 0;
-    border-bottom: 1px solid #383838; /* Separator */
-    filter: grayscale(80%); /* Less intense grayscale */
-    transition: filter 0.4s ease;
+    display: block;
+    width: 100%;
+    height: auto; /* Let aspect-ratio determine height */
+    object-fit: cover; /* Ensure image covers space */
+    object-position: center; /* Center image */
+    aspect-ratio: 1 / 1; /* FORCE SQUARE RATIO */
+    background-color: #111;
+    border-radius: 0; /* Reset radius */
+    border-top-left-radius: 8px; /* Apply radius only to top corners */
+    border-top-right-radius: 8px;
+    transition: transform 0.3s ease, filter 0.3s ease;
+    flex-shrink: 0; /* Prevent image shrinking */
 }
-.preview-swiper .swiper-slide:hover img { filter: grayscale(0%); }
-.preview-swiper .swiper-slide h4 {
-    font-size: 0.9em; font-weight: 600;
-    padding: 12px 15px; /* Slightly more padding */
-    color: var(--text-primary); line-height: 1.3; margin: 0;
-    flex-grow: 1; display: flex; align-items: center; justify-content: center;
-    text-align: center; transition: color 0.3s ease;
-    background-color: rgba(0,0,0,0.1); /* Slight background for text area */
-    text-shadow: var(--text-shadow); /* Add shadow */
+
+/* --- REMOVE Responsive Aspect Ratio --- */
+/*
+@media (max-width: 1024px) {
+    .preview-swiper .swiper-slide img {
+        aspect-ratio: 4 / 5;
+    }
 }
-.preview-swiper .swiper-slide:hover h4 { color: var(--brand-orange); }
+
+@media (max-width: 768px) {
+    .preview-swiper .swiper-slide img {
+        aspect-ratio: 1 / 1;
+    }
+}
+*/
+
+/* --- Hover Effects on Thumbnail --- */
+.preview-swiper .swiper-slide:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2), 0 0 8px var(--brand-orange-glow);
+    border-color: var(--brand-orange);
+}
+
+.preview-swiper .swiper-slide:hover img {
+    filter: grayscale(0%);
+}
+
+/* Apply hover effect to grid items as well */
+.grid-item.card-style:hover img {
+    filter: grayscale(0%);
+}
+
 
 /* Swiper Navigation Buttons */
 .swiper-button-custom {
-    position: absolute; top: 50%; transform: translateY(-50%);
+    position: absolute; top: 45%; /* Adjust vertical position slightly if needed */ transform: translateY(-50%);
     width: 34px; height: 34px;
     background: linear-gradient(145deg, rgba(50, 50, 50, 0.8), rgba(25, 25, 25, 0.9));
     border: 1px solid #404040; border-radius: 50%;
@@ -213,67 +417,80 @@ p.small-info.home-info { margin: 0.6em 0 0 0; font-size: 0.8em; color: var(--tex
 .swiper-button-custom:active { transform: translateY(-50%) scale(0.98); box-shadow: 0 1px 3px rgba(0,0,0,0.3); }
 .swiper-button-custom.preview-prev { left: 0px; }
 .swiper-button-custom.preview-next { right: 0px; }
-.swiper-button-custom::after { display: none; } /* Hide default swiper arrows if they appear */
+.swiper-button-custom::after { display: none; } /* Hide default swiper arrows */
+.swiper-button-disabled { opacity: 0.3; cursor: not-allowed; pointer-events: none; } /* Style for disabled nav */
 
 p.small-info.swipe-info {
-    font-size: 0.75em; /* Slightly larger */ color: var(--text-muted); text-align: center;
-    margin-top: 1em; /* Space above info text */
-    padding-top: 0.8em; flex-shrink: 0;
+    font-size: 0.75em; color: var(--text-muted); text-align: center;
+    margin-top: 1em; padding-top: 0.8em; flex-shrink: 0;
 }
 
 /* --- Main Grid Area Styling --- */
-.grid-area-main-grid .section-title.all-works-title {
+.portfolio-grid.card-style { /* Apply card style structure BUT override background */
+    display: grid; /* Ensure grid layout */
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: var(--grid-gap);
+    margin-top: 0;
+    padding: 20px; /* Padding inside the grid container */
+    align-content: start; /* Align items to the start */
+    /* --- REMOVE BACKGROUND --- */
+    background: none;
+    backdrop-filter: none; /* Remove inherited backdrop */
+    -webkit-backdrop-filter: none;
+    border: 1px solid var(--card-border-alpha); /* Keep subtle border for the area */
+    box-shadow: none; /* Remove inherited shadow */
+    /* Make sure it can grow */
+    flex-grow: 1;
+    /* display: grid; /* Keep as grid */ /* Redundant */
+}
+
+.portfolio-grid .section-title.all-works-title {
     font-size: 1.3em; margin: 0 0 1em 0; padding: 0 0 0.4em 0;
     border-bottom: 1px solid var(--card-border); font-weight: 600;
+    color: var(--text-primary); /* Ensure title is visible */
+    /* Make title span across grid columns */
+    grid-column: 1 / -1;
 }
-.portfolio-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); /* Adjust minmax */
-    gap: var(--grid-gap); 
-    margin-top: 0;
-    background: rgba(255, 255, 255, 0.1); /* Transparent white */
-    backdrop-filter: blur(10px); /* Blur effect */
-    -webkit-backdrop-filter: blur(10px); /* Safari support */
-    border: 1px solid rgba(255, 255, 255, 0.2); /* Subtle border */
-    border-radius: var(--border-radius-cards); /* Rounded corners */
-    padding: 20px; /* Add padding inside the grid */
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3); /* Subtle shadow */
-}
-.grid-item.card-style {
-    background-color: var(--card-bg); border: 1px solid var(--card-border);
-    border-radius: var(--border-radius-cards); overflow: hidden; cursor: pointer;
-    transition: all 0.3s ease; display: flex; flex-direction: column;
-    box-shadow: 0 3px 10px var(--card-shadow); padding: 0; /* Reset padding for grid items */
-    -webkit-backdrop-filter: none; backdrop-filter: none; /* Remove blur from grid items */
-}
-.grid-item.card-style:hover {
-    transform: translateY(-5px) scale(1.02); /* Slightly less lift */
-    box-shadow: 0 6px 15px rgba(0,0,0,0.3), 0 0 8px var(--brand-orange-glow); /* More prominent shadow */
-    border-color: var(--brand-orange);
-}
+
+/* Styles for grid-item.card-style moved up to general .card-style section for specificity */
+
 .grid-item.card-style img {
     display: block; width: 100%; height: 150px; /* Adjust height */
     object-fit: cover; position: relative; z-index: 0;
     filter: grayscale(80%); transition: filter 0.4s ease;
     border-bottom: 1px solid var(--card-border);
+    /* Ensure top corners match card radius */
+    border-top-left-radius: var(--border-radius-cards);
+    border-top-right-radius: var(--border-radius-cards);
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
 }
-.grid-item.card-style:hover img { filter: grayscale(0%); }
+
 .grid-item.card-style h4 {
     font-size: 0.9em; font-weight: 600;
     padding: 12px 15px; /* Consistent padding */
     color: var(--text-primary); line-height: 1.35; margin: 0;
     flex-grow: 1; display: flex; align-items: center;
-    position: relative; z-index: 2; transition: color 0.3s ease;
+    position: relative; z-index: 1; /* Above potential pseudo-elements, below modals */
+    transition: color 0.3s ease;
     text-align: left;
-    background-color: rgba(0,0,0,0.1); /* Match swiper slide text background */
-    text-shadow: var(--text-shadow); /* Add shadow */
+    background-color: rgba(0,0,0,0.1); /* Subtle background for text area */
+    text-shadow: var(--text-shadow);
+    /* Ensure bottom corners match card radius */
+    border-bottom-left-radius: var(--border-radius-cards);
+    border-bottom-right-radius: var(--border-radius-cards);
 }
-.grid-item.card-style:hover h4 { color: var(--brand-orange); }
+/* Combined hover effect for title color */
+/* .preview-swiper .swiper-slide:hover h4, /* Handled above */
+.grid-item.card-style:hover h4 {
+    color: var(--brand-orange);
+}
+
 
 /* --- Footer Styling --- */
 .grid-area-footer footer {
-    text-align: center; margin-top: 1em; /* Reduced top margin */
-    padding: 1.5em 0 0.5em 0; /* Adjusted padding */
+    text-align: center; margin-top: 1em;
+    padding: 1.5em 0 0.5em 0;
     border-top: 1px solid var(--card-border);
     font-size: 0.8em; color: var(--text-muted);
 }
@@ -282,7 +499,7 @@ p.small-info.swipe-info {
 .modal {
     position: fixed; inset: 0; display: none;
     align-items: center; justify-content: center;
-    z-index: 1000; padding: 15px; /* Added padding */
+    z-index: 1000; padding: 15px;
 }
 .modal.is-visible {
     display: flex; animation: modalOverlayFadeIn 0.3s ease-out forwards;
@@ -291,23 +508,23 @@ p.small-info.swipe-info {
 @keyframes modalSlideInUp { from { opacity: 0; transform: translateY(25px) scale(0.98); } to { opacity: 1; transform: translateY(0) scale(1); } }
 
 .modal-overlay {
-    position: absolute; inset: 0;
-    background-color: rgba(0, 0, 0, 0.555); /* Darker overlay */
+    position: fixed; inset: 0; /* Use fixed to ensure cover */
+    background-color: rgba(0, 0, 0, 0.65); /* Darker overlay */
     cursor: pointer; z-index: 1001;
-    -webkit-backdrop-filter: blur(5px); backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
 }
 .modal-content {
-    background: rgba(0, 0, 0, 0.637); /* Darker transparent black */
-    backdrop-filter: blur(50px); /* Blur effect */
-    -webkit-backdrop-filter: blur(14px); /* Safari support */
-    border: 1px solid rgba(255, 255, 255, 0.1); /* Subtle border */
+    background: var(--modal-bg-alpha); /* Use alpha bg */
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    border: 1px solid var(--card-border-alpha);
     border-radius: 12px;
-    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.6); /* Stronger shadow */
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.6);
     position: relative;
-    padding: 25px 30px; /* Adjusted padding */
-    max-width: 750px; width: 100%; /* Slightly wider max-width */
+    padding: 25px 30px;
+    max-width: 750px; width: 100%;
     max-height: 90vh; overflow-y: auto; z-index: 1002;
-    border-top: 3px solid var(--brand-orange); /* Accent border */
+    border-top: 3px solid var(--brand-orange);
     opacity: 0; transform: translateY(25px) scale(0.98);
 }
 .modal.is-visible .modal-content {
@@ -327,389 +544,123 @@ p.small-info.swipe-info {
     transform: rotate(90deg) scale(1.05); border-color: rgba(255, 255, 255, 0.3);
 }
 .modal-content h2 {
-    font-size: 1.5em; /* Adjusted title size */
-    margin-top: 0; margin-bottom: 1em; /* Adjusted margin */
-    color: var(--text-primary); padding-right: 40px; /* Space for close button */
+    font-size: 1.5em; margin-top: 0; margin-bottom: 1em;
+    color: var(--text-primary); padding-right: 40px;
     font-weight: 600; line-height: 1.3;
-    text-shadow: var(--text-shadow); /* Add shadow */
+    text-shadow: var(--text-shadow);
 }
 .modal-body { padding-top: 0.5em; }
 
-#purchase-options-modal .modal-content { max-width: 880px; } /* Wider purchase modal */
-#license-apply-modal .modal-content { max-width: 650px; } /* Specific width for license form */
+#purchase-options-modal .modal-content { max-width: 880px; }
+#license-apply-modal .modal-content { max-width: 650px; }
 
 /* Video/Embed Container Styles (inside modal) */
 #modal-video-container {
     position: relative; width: 100%; max-width: 100%;
-    background: #000; margin-bottom: 1.5em; /* Adjusted margin */
+    background: #000; margin-bottom: 1.5em;
     border-radius: var(--modal-video-radius);
     border: 1px solid var(--modal-border);
     overflow: hidden; height: auto;
+    display: none; /* Hide by default, shown by JS */
 }
 #modal-video-container.aspect-16-9 { height: 0; padding-bottom: 56.25%; }
-/* Specific style for Instagram Embeds */
-#modal-video-container.instagram-embed-container {
-    height: auto; max-height: 70vh; /* Limit height */
-    padding-bottom: 0; display: flex; justify-content: center;
-    align-items: center; background: #111; /* Give it a background */
-    min-height: 300px; /* Ensure it has some minimum size */
-}
 #modal-video-container.fixed-height {
     height: auto; padding-bottom: 0; overflow: visible;
     background: transparent; border: none;
 }
-
 #modal-video-container iframe { display: block; border: 0; border-radius: inherit; max-width: 100%; }
 #modal-video-container.aspect-16-9 iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
-#modal-video-container.instagram-embed-container iframe {
-    position: static; /* Let flexbox center it */
-    width: auto; max-width: 95%; /* Slightly smaller than container */
-    height: auto; max-height: 68vh; /* Slightly smaller than container */
-    margin: auto; border-radius: 6px; /* Add slight radius */
-    min-width: 300px; /* Minimum width */
-    min-height: 300px; /* Minimum height */
-    box-shadow: 0 0 15px rgba(0,0,0,0.5);
-}
 #modal-video-container.fixed-height iframe { position: static; width: 100%; height: inherit; border-radius: 8px; }
 
-#modal-details {}
-#modal-description { font-size: 0.9em; line-height: 1.6; color: var(--text-secondary); margin-bottom: 1em; }
-#modal-meta { font-size: 0.8em; color: var(--text-muted); margin-bottom: 0; padding-top: 0; border-top: none; line-height: 1.4; word-break: break-word; }
-.modal-actions { margin-top: 1.5em; padding-top: 1em; border-top: 1px solid var(--modal-border); display: flex; flex-wrap: wrap; gap: 10px; justify-content: flex-start; align-items: center; }
-
-/* --- Consistent Button Styles --- */
-.button-86 { /* Style for main action buttons */
-    display: inline-block; padding: 10px 18px; /* Adjusted padding */
-    font-size: 0.9em; font-weight: 700; color: #fff; /* White text */
-    background: linear-gradient(90deg, var(--brand-orange), var(--brand-orange-darker));
-    border: none; border-radius: 8px; /* Slightly rounder */
-    cursor: pointer; text-align: center; text-decoration: none;
-    transition: all 0.3s ease;
-    box-shadow: 0 3px 8px rgba(242, 153, 74, 0.25);
-    vertical-align: middle;
-}
-.button-86:hover {
-    background: linear-gradient(90deg, var(--brand-orange-darker), var(--brand-orange));
-    box-shadow: 0 5px 12px rgba(242, 153, 74, 0.35);
-    transform: translateY(-2px);
-}
-.button-86:active { transform: translateY(0px); box-shadow: 0 2px 5px rgba(242, 153, 74, 0.2); }
-
-/* Modal Buttons */
-.modal-button {
-    display: inline-block; margin: 0; font-weight: 600;
-    text-decoration: none; font-size: 0.9em; padding: 10px 18px;
-    border: none; border-radius: 8px; transition: all 0.3s ease;
-    cursor: pointer; text-align: center; background-size: 200% auto;
-    line-height: 1.4; vertical-align: middle;
-}
-.modal-button:hover { transform: translateY(-2px); }
-.modal-button.primary { /* For main modal actions like 'Generate' */
-    background-image: linear-gradient(to right, var(--brand-orange-darker) 0%, var(--brand-orange) 50%, var(--brand-orange-darker) 100%);
-    color: #fff; box-shadow: 0 3px 8px rgba(242, 153, 74, 0.25);
-}
-.modal-button.primary:hover { background-position: right center; box-shadow: 0 5px 12px var(--brand-orange-glow); }
-
-.modal-button.secondary { /* For less prominent actions like 'View Source', 'Copy', 'Download' */
-    background-color: #383838; /* Darker grey */
-    color: var(--text-secondary); border: 1px solid #4f4f4f; /* Slightly lighter border */
-    box-shadow: none;
-}
-.modal-button.secondary:hover {
-    background-color: #454545; border-color: var(--text-secondary); color: var(--text-primary);
-}
-
-.modal-button.purchase { /* For purchase card selection */
-    background-image: linear-gradient(to right, var(--brand-green-darker) 0%, var(--brand-green) 50%, var(--brand-green-darker) 100%);
-    color: #fff; box-shadow: 0 3px 8px var(--brand-green-glow);
-}
-.modal-button.purchase:hover { background-position: right center; box-shadow: 0 5px 12px rgba(39, 174, 96, 0.3); }
-
-.modal-button.small { padding: 8px 14px; font-size: 0.8em; border-radius: 6px;} /* Smaller buttons */
-
-/* Ensure modal link takes secondary style */
-#modal-link.modal-button.secondary { margin: 0; }
-
-
-/* --- Purchase/License Modals --- */
-.license-container {
-    display: flex; /* Use flexbox for layout */
-    justify-content: center; /* Center cards */
-    gap: 20px; /* Space between cards */
-    flex-wrap: wrap; /* Allow wrapping on smaller screens */
-    margin-top: 1em;
-}
-.license-card {
-    border: 1px solid #383838; background-color: #282828; /* Slightly darker card */
-    box-shadow: 0 4px 12px rgba(0,0,0,0.25); padding: 15px 20px; /* Adjusted padding */
-    border-radius: 10px; cursor: pointer; transition: all 0.3s ease;
-    flex: 1; /* Allow cards to grow */
-    min-width: 240px; /* Minimum width */
-    max-width: 280px; /* Maximum width */
-    display: flex; flex-direction: column; /* Stack content vertically */
-}
-.license-card:hover {
-    background-color: #303030;
-    box-shadow: 0 8px 20px var(--shadow-color-strong), 0 0 10px var(--brand-green-glow);
-    border-color: var(--brand-green);
-    transform: translateY(-4px);
-}
-.license-card h3 {
-    border-bottom: 1px solid #444; font-size: 1.2em; font-weight: 600;
-    text-align: center; padding-bottom: 0.6em; margin-bottom: 0.8em;
-    color: var(--brand-green); /* Use green for purchase titles */
-}
-.license-card p.price { font-size: 1.1em; font-weight: 700; margin-bottom: 0.8em; text-align: center; }
-.license-card p.price .negotiable { font-size: 0.75em; font-weight: normal; color: var(--text-muted); display: block; margin-top: 3px;}
-.license-card ul.features {
-    list-style: none; padding: 0 0 0 5px; margin-bottom: 1.2em;
-    font-size: 0.8em; color: var(--text-secondary); flex-grow: 1; /* Push button to bottom */
-}
-.license-card ul.features li { margin-bottom: 0.6em; padding-left: 1.1em; position: relative; }
-.license-card ul.features li::before { content: '✓'; position: absolute; left: 0; color: var(--brand-green); font-weight: bold; }
-.license-card .modal-button.small { margin-top: auto; width: 100%; } /* Button at bottom */
-#purchase-options-modal .small-info.purchase-footer-info { font-size: 0.8em; margin-top: 1.5em; text-align: center; color: var(--text-muted); }
-
-/* License Form Specifics */
-#license-apply-modal h2 { font-size: 1.4em; margin-bottom: 1.2em; font-weight: 600;}
-#license-form .form-group { margin-bottom: 1em; }
-#license-form label { font-size: 0.85em; margin-bottom: 0.3em; display: block; color: var(--text-secondary); font-weight: 500;}
-#license-form input[type="text"], #license-form input[type="email"] {
-    background-color: var(--input-bg); border: 1px solid var(--input-border);
-    padding: 10px 12px; font-size: 0.9em; border-radius: 6px; width: 100%; color: var(--text-primary);
-}
-#license-form input[readonly] { background-color: #202020; cursor: not-allowed; opacity: 0.8; }
-#license-form input[type="text"]:focus, #license-form input[type="email"]:focus {
-    background-color: #303030; border-color: var(--input-focus-border); outline: none; box-shadow: 0 0 0 2px var(--brand-orange-glow);
-}
-#license-form small { font-size: 0.75em; margin-top: 0.3em; display: block; color: var(--text-muted);}
-#license-form .agreement-box {
-    margin-top: 1.2em; padding-top: 0.8em; border-top: 1px solid var(--input-border);
-    display: flex; align-items: flex-start; /* Align checkbox top */
-}
-#license-form .agreement-box input[type="checkbox"] {
-    transform: scale(1.1); margin-right: 10px; margin-top: 0.2em; flex-shrink: 0; accent-color: var(--brand-orange);
-}
-#license-form .agreement-box label { font-size: 0.8em; line-height: 1.45; color: var(--text-secondary);}
-#license-form .agreement-box label a { color: var(--brand-orange); text-decoration: none; border-bottom: 1px dotted var(--brand-orange);}
-#license-form .agreement-box label a:hover { color: var(--brand-orange-darker); border-bottom-style: solid;}
-
-#license-terms-full {
-    max-height: 120px; /* Limit height */ border: 1px solid var(--input-border);
-    background: #1c1c1c; border-radius: 4px; padding: 8px 10px;
-    font-size: 0.75em; color: var(--text-secondary); white-space: pre-wrap; font-family: monospace;
-    margin: 0.5em 0 1em 0;
-}
-#license-form .form-actions { margin-top: 1.5em; display: flex; justify-content: center; gap: 12px; flex-wrap: wrap;}
-
-/* License Display Area Styling */
-#license-display-area { margin-top: 1.5em; border-top: 1px solid var(--modal-border); padding-top: 1em;}
-#license-display-area .license-display-title { font-weight: 600; margin-bottom: 0.5em; color: var(--text-secondary); font-size: 0.9em;}
-#license-form textarea#license-text-output {
-    background-color: #1c1c1c; border: 1px solid var(--input-border); color: var(--text-secondary);
-    font-family: monospace; padding: 10px; border-radius: 6px; resize: vertical;
-    width: 100%; font-size: 0.8em; margin-bottom: 0.8em; line-height: 1.5; min-height: 150px;
-}
-.license-copy-action { text-align: center; margin-bottom: 0.5em; }
-#copy-license-btn { display: inline-block; } /* Already styled as modal-button secondary */
-#license-display-area .copy-info { font-size: 0.75em; color: var(--text-muted); margin-top: 0.5em; text-align: center;}
-
-/* Error Message */
-.error-message { color: #ff8080; font-size: 0.85em; margin-top: 0.8em; text-align: center; font-weight: 500;}
-
-/* Ko-fi Widget - Keep as is */
-div[id^='kofi-widget-'] .kofi-button { border-color: var(--brand-orange) !important; }
-
-
-/* --- RESPONSIVE Refinements --- */
-@media (max-width: 1024px) { /* Tablet adjustments if needed beyond grid changes */
-    .grid-area-preview .preview-section { min-height: 350px; }
-    .portfolio-grid { grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); }
-}
-
-@media (max-width: 768px) { /* Smaller Tablet / Large Mobile */
-    .dashboard-container { --grid-gap: 12px; padding: 12px; }
-    .card-style { padding: 15px 18px; }
-    .main-header h1 { font-size: 1.4em;} .main-header .subtitle { font-size: 0.85em;}
-    .button-86, #modal-link, .modal-button { padding: 9px 15px; font-size: 0.85em; border-radius: 6px;}
-    .portfolio-grid { grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); }
-    .grid-item.card-style img { height: 130px; }
-    .modal-content { padding: 20px 25px; }
-    .modal-content h2 { font-size: 1.3em; }
-    .license-container { gap: 15px; }
-    .license-card { min-width: 220px; }
-}
-
-@media (max-width: 576px) { /* Small Mobile */
-    .dashboard-container { --grid-gap: 10px; padding: 10px; }
-    .card-style { padding: 12px 15px; border-radius: 10px; }
-    .main-header { flex-direction: column; align-items: flex-start; text-align: left;}
-    .main-header h1 { font-size: 1.3em;} .main-header .subtitle { font-size: 0.8em;}
-    .button-86, #modal-link, .modal-button { padding: 8px 14px; font-size: 0.8em; border-radius: 6px;}
-    .home-action-button-container { flex-direction: column; gap: 10px; align-items: stretch;}
-    .button-86 { width: 100%; } /* Stack buttons */
-
-    .preview-container { max-width: 100%; padding: 0 5px; min-height: 280px;}
-    .swiper.preview-swiper { width: calc(100% - 60px); height: 260px; margin: 0.5em auto 1em auto; min-height: 260px;}
-    .preview-swiper .swiper-slide img { height: 60%; } .preview-swiper .swiper-slide h4 { font-size: 0.8em; padding: 10px 12px; }
-    .swiper-button-custom { width: 30px; height: 30px; } .swiper-button-custom svg { width: 16px; height: 16px; }
-    .swiper-button-custom.preview-prev { left: 5px; } .swiper-button-custom.preview-next { right: 5px; }
-
-
-    .portfolio-grid { grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; } /* Smaller items */
-    .grid-item.card-style img { height: 120px; } .grid-item.card-style h4 { padding: 10px 12px; font-size: 0.8em;}
-
-    .modal { padding: 10px; }
-    .modal-content { padding: 15px 18px; border-radius: 10px; }
-    .modal-close { top: 8px; right: 8px; width: 30px; height: 30px; font-size: 1.4em; }
-    .modal-content h2 { font-size: 1.2em; }
-    .modal-actions { flex-direction: column; align-items: stretch; gap: 8px; }
-    #modal-link, .modal-actions .button-86, .modal-actions .modal-button { width: 100%; margin: 0; text-align: center; }
-
-    .license-container { flex-direction: column; align-items: center; gap: 12px; }
-    .license-card { width: 100%; max-width: 300px; padding: 12px 15px;} /* Limit width on small screens */
-    #license-apply-modal .modal-content { padding: 15px; } #license-apply-modal h2 { font-size: 1.2em; }
-    #license-form input[type="text"] { padding: 9px 10px; font-size: 0.85em; }
-    #license-form .agreement-box label { font-size: 0.75em; }
-    #license-form textarea#license-text-output { font-size: 0.75em; padding: 8px;}
-    #modal-video-container.instagram-embed-container iframe { min-width: 280px; min-height: 280px; max-width: 98%; max-height: 65vh; }
-
-    .video-background-container {
-        height: 100%; /* Adjust height to fill the screen */
-        aspect-ratio: auto; /* Disable fixed aspect ratio */
-    }
-
-    .video-background-container iframe {
-        width: auto; /* Allow width to adjust */
-        height: auto; /* Allow height to adjust */
-        min-width: 100%; /* Ensure it fills horizontally */
-        min-height: 100%; /* Ensure it fills vertically */
-        object-fit: cover; /* Zoom and crop to maintain aspect ratio */
-    }
-}
-
-/* Video Background Styling */
-.video-background-container {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%; /* Fill the container */
-    overflow: hidden;
-    z-index: -1; /* Place behind other content */
-}
-
-.video-background-container iframe {
-    width: 100%;
-    height: 100%;
-    object-fit: cover; /* Resize and crop to fill the container */
-    pointer-events: none; /* Prevent interaction with the video */
-    border: none;
-}
-
-/* --- Styling specific for Instagram Embed Container --- */
+/* Styling untuk Instagram Embed */
 #modal-video-container.instagram-embed-container {
-    display: flex; /* Center content */
-    flex-direction: column; /* Stack iframe and fallback text */
+    display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
-    background-color: #111; /* Dark background */
-    min-height: 350px;
-    max-height: 75vh;
+    background-color: #111;
     padding: 15px;
-    height: auto;
-    padding-bottom: 0;
+    border-radius: var(--modal-video-radius);
+    border: 1px solid var(--modal-border);
     overflow: hidden;
+    width: min(100%, 500px);
+    aspect-ratio: 1 / 1;
+    margin: 0 auto 1.5em auto; /* Add bottom margin back */
+    padding-bottom: 15px !important; /* Menjaga padding */
 }
 
-/* Styling for the Instagram iframe itself */
+#modal-video-container.instagram-embed-container iframe {
+    width: 100%;
+    height: 100%;
+    border-radius: inherit;
+    object-fit: cover;
+    position: static !important;
+    height: auto;
+}
+
+/* Responsif untuk Tablet */
+@media (max-width: 768px) {
+    #modal-video-container.instagram-embed-container {
+        width: 90%;
+        aspect-ratio: 4 / 5;
+    }
+}
+
+/* Responsif untuk Mobile */
+@media (max-width: 576px) {
+    #modal-video-container.instagram-embed-container {
+        width: 100%;
+        aspect-ratio: 1 / 1;
+    }
+}
+
+/* Wrapper untuk Embed */
+.instagram-embed-wrapper {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: #111;
+    padding: 15px;
+    border-radius: var(--modal-video-radius);
+    border: 1px solid var(--modal-border);
+    overflow: hidden;
+    width: min(100%, 500px);
+    aspect-ratio: 1 / 1;
+    margin: 0 auto 1.5em auto; /* Add bottom margin */
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4);
+}
+
+/* Responsif untuk Tablet */
+@media (max-width: 768px) {
+    .instagram-embed-wrapper {
+        width: 90%;
+        aspect-ratio: 4 / 5;
+    }
+}
+
+/* Responsif untuk Mobile */
+@media (max-width: 576px) {
+    .instagram-embed-wrapper {
+        width: 100%;
+        aspect-ratio: 1 / 1;
+    }
+}
+
+/* Styling Iframe */
 #modal-video-container.instagram-embed-container .instagram-iframe {
     display: block;
     border: none;
-    max-width: 100%;
-    width: 500px;
-    max-height: calc(75vh - 60px);
+    width: 100%;
+    max-height: calc(70vh - 60px);
     min-height: 300px;
     border-radius: 8px;
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4);
     background-color: #222;
-    order: 1;
 }
 
-/* --- Styling specific for Instagram Embed Container --- */
-#modal-video-container.instagram-embed-container {
-    display: flex; /* Use Flexbox for centering */
-    flex-direction: column; /* Stack iframe and fallback text */
-    justify-content: center; /* Center vertically */
-    align-items: center; /* Center horizontally */
-    background-color: #111; /* Dark background while loading/if failed */
-    min-height: 350px; /* Minimum height */
-    max-height: 75vh; /* Limit maximum height */
-    padding: 15px; /* Padding around content */
-    height: auto; /* Override fixed height/padding-bottom */
-    padding-bottom: 0;
-    overflow: hidden; /* Hide potential overflow from iframe */
-}
-
-/* Styling for the Instagram iframe itself */
-#modal-video-container.instagram-embed-container .instagram-iframe {
-    display: block; /* Ensure it's a block element */
-    border: none; /* Remove default border */
-    max-width: 100%; /* Prevent exceeding container width */
-    width: 500px; /* Set a reasonable max-width */
-    max-height: calc(75vh - 60px); /* Max height considering padding and fallback text */
-    min-height: 300px; /* Minimum display height */
-    border-radius: 8px; /* Rounded corners */
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4); /* Add shadow */
-    background-color: #222; /* Background in case content is slow */
-    order: 1; /* Ensure iframe comes first visually */
-}
-
-/* Styling for the Fallback Text/Link */
-#modal-video-container.instagram-embed-container .instagram-fallback {
-    font-size: 0.8em;
-    color: var(--text-muted);
-    text-align: center;
-    margin-top: 15px; /* Space between iframe and fallback */
-    line-height: 1.4;
-    max-width: 90%;
-    order: 2; /* Ensure fallback comes after iframe visually */
-}
-
-#modal-video-container.instagram-embed-container .instagram-fallback-link {
-    color: var(--brand-orange);
-    text-decoration: underline;
-    font-weight: 500;
-}
-
-#modal-video-container.instagram-embed-container .instagram-fallback-link:hover {
-    color: var(--brand-orange-darker);
-    text-decoration: none;
-}
-
-/* --- Ensure other aspect ratio classes don't interfere --- */
-/* Reset padding-bottom if it was set by other types */
-#modal-video-container.instagram-embed-container {
-    padding-bottom: 0 !important;
-}
-/* Iframe inside IG container should not be absolute */
-#modal-video-container.instagram-embed-container iframe {
-    position: static !important;
-    width: auto; /* Let max-width control it */
-    height: auto; /* Let max-height control it */
-}
-
-/* Wrapper for Instagram embed with play button */
-.instagram-embed-wrapper {
-    position: relative;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-    height: 100%;
-}
-
-/* Play button styling */
+/* Tombol Play */
 .instagram-play-button {
     position: absolute;
     z-index: 2;
@@ -736,9 +687,587 @@ div[id^='kofi-widget-'] .kofi-button { border-color: var(--brand-orange) !import
     transform: scale(0.95);
 }
 
-/* Ensure iframe is below the play button initially */
-.instagram-embed-wrapper iframe {
-    pointer-events: none; /* Disable interaction until play button is clicked */
+/* Fallback Text */
+#modal-video-container.instagram-embed-container .instagram-fallback {
+    font-size: 0.8em;
+    color: var(--text-muted);
+    text-align: center;
+    margin-top: 10px;
+    line-height: 1.4;
+    max-width: 90%;
+    order: 2;
+    flex-shrink: 0;
 }
 
-/* END OF FILE style.css */
+/* Link di Fallback */
+#modal-video-container.instagram-embed-container .instagram-fallback-link {
+    color: var(--brand-orange);
+    text-decoration: underline;
+    font-weight: 500;
+}
+
+#modal-video-container.instagram-embed-container .instagram-fallback-link:hover {
+    color: var(--brand-orange-darker);
+    text-decoration: none;
+}
+
+/* Deskripsi Modal */
+#modal-details {
+    padding-top: 1em;
+}
+
+#modal-description {
+    font-size: 0.9em;
+    line-height: 1.6;
+    color: var(--text-secondary);
+    margin-bottom: 1em;
+}
+
+#modal-meta {
+    font-size: 0.8em;
+    color: var(--text-muted);
+    margin-bottom: 0;
+    padding-top: 0;
+    border-top: none;
+    line-height: 1.4;
+    word-break: break-word;
+    white-space: pre-wrap;
+}
+
+/* Aksi Modal */
+.modal-actions {
+    margin-top: 1.5em;
+    padding-top: 1em;
+    border-top: 1px solid var(--modal-border);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+/* Tombol Utama */
+.button-86 {
+    display: inline-block;
+    padding: 10px 18px;
+    font-size: 0.9em;
+    font-weight: 700;
+    color: #fff;
+    background: linear-gradient(90deg, var(--brand-orange), var(--brand-orange-darker));
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    text-align: center;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    box-shadow: 0 3px 8px rgba(242, 153, 74, 0.25);
+    vertical-align: middle;
+    user-select: none;
+}
+
+.button-86:hover {
+    background: linear-gradient(90deg, var(--brand-orange-darker), var(--brand-orange));
+    box-shadow: 0 5px 12px rgba(242, 153, 74, 0.35);
+    transform: translateY(-2px);
+}
+
+.button-86:active {
+    transform: translateY(0px);
+    box-shadow: 0 2px 5px rgba(242, 153, 74, 0.2);
+}
+
+/* Tombol dalam Modal */
+.modal-button {
+    display: inline-block;
+    margin: 0;
+    font-weight: 600;
+    text-decoration: none;
+    font-size: 0.9em;
+    padding: 10px 18px;
+    border: none;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    text-align: center;
+    background-size: 200% auto;
+    line-height: 1.4;
+    vertical-align: middle;
+    user-select: none;
+}
+
+.modal-button:hover {
+    transform: translateY(-2px);
+}
+
+.modal-button.primary {
+    background-image: linear-gradient(to right, var(--brand-orange-darker) 0%, var(--brand-orange) 50%, var(--brand-orange-darker) 100%);
+    color: #fff;
+    box-shadow: 0 3px 8px rgba(242, 153, 74, 0.25);
+}
+
+.modal-button.primary:hover {
+    background-position: right center;
+    box-shadow: 0 5px 12px var(--brand-orange-glow);
+}
+
+.modal-button.primary:disabled {
+    background-image: none;
+    background-color: #555;
+    cursor: not-allowed;
+    box-shadow: none;
+    transform: none;
+    opacity: 0.7;
+}
+
+
+.modal-button.secondary { /* For less prominent actions like 'View Source', 'Copy', 'Download' */
+    background-color: #383838;
+    color: var(--text-secondary); border: 1px solid #4f4f4f;
+    box-shadow: none;
+}
+.modal-button.secondary:hover {
+    background-color: #454545; border-color: var(--text-secondary); color: var(--text-primary);
+}
+.modal-button.secondary:disabled { background-color: #555; color: #999; border-color: #666; cursor: not-allowed; transform: none; opacity: 0.7; }
+
+
+.modal-button.purchase { /* For purchase card selection */
+    background-image: linear-gradient(to right, var(--brand-green-darker) 0%, var(--brand-green) 50%, var(--brand-green-darker) 100%);
+    color: #fff; box-shadow: 0 3px 8px var(--brand-green-glow);
+}
+.modal-button.purchase:hover { background-position: right center; box-shadow: 0 5px 12px rgba(39, 174, 96, 0.3); }
+
+.modal-button.small { padding: 8px 14px; font-size: 0.8em; border-radius: 6px;} /* Smaller buttons */
+#modal-link.modal-button.secondary { margin: 0; } /* Ensure modal link takes secondary style */
+/* Specific Buttons for Modal Actions */
+#modal-apply-license-btn, #modal-purchase-license-btn { /* Use button-86 style */ }
+
+/* --- Purchase/License Modals --- */
+.license-container {
+    display: flex; justify-content: center; gap: 20px;
+    flex-wrap: wrap; margin-top: 1em;
+}
+.license-card {
+    border: 1px solid #383838; background-color: #282828;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.25); padding: 15px 20px;
+    border-radius: 10px; cursor: pointer; transition: all 0.3s ease;
+    flex: 1; min-width: 240px; max-width: 280px;
+    display: flex; flex-direction: column;
+}
+.license-card:hover {
+    background-color: #303030;
+    box-shadow: 0 8px 20px var(--shadow-color-strong), 0 0 10px var(--brand-green-glow);
+    border-color: var(--brand-green);
+    transform: translateY(-4px);
+}
+.license-card h3 {
+    border-bottom: 1px solid #444; font-size: 1.2em; font-weight: 600;
+    text-align: center; padding-bottom: 0.6em; margin-bottom: 0.8em;
+    color: var(--brand-green);
+}
+.license-card p.price { font-size: 1.1em; font-weight: 700; margin-bottom: 0.8em; text-align: center; }
+.license-card p.price .negotiable { font-size: 0.75em; font-weight: normal; color: var(--text-muted); display: block; margin-top: 3px;}
+.license-card ul.features {
+    list-style: none; padding: 0 0 0 5px; margin-bottom: 1.2em;
+    font-size: 0.8em; color: var(--text-secondary); flex-grow: 1;
+}
+.license-card ul.features li { margin-bottom: 0.6em; padding-left: 1.1em; position: relative; }
+.license-card ul.features li::before { content: '✓'; position: absolute; left: 0; color: var(--brand-green); font-weight: bold; }
+.license-card .modal-button.small { margin-top: auto; width: 100%; }
+#purchase-beat-info { font-style: italic; color: var(--text-secondary); margin-bottom: 1.5em; text-align: center; }
+#purchase-options-modal .small-info.purchase-footer-info { font-size: 0.8em; margin-top: 1.5em; text-align: center; color: var(--text-muted); }
+
+/* License Form Specifics */
+#license-apply-modal h2 { font-size: 1.4em; margin-bottom: 1.2em; font-weight: 600;}
+#license-form .form-group { margin-bottom: 1em; }
+#license-form label:not([for="license-agreement-check"]) { /* Exclude checkbox label */
+    font-size: 0.85em; margin-bottom: 0.3em; display: block; color: var(--text-secondary); font-weight: 500;
+}
+#license-form input[type="text"], #license-form input[type="email"] {
+    background-color: var(--input-bg); border: 1px solid var(--input-border);
+    padding: 10px 12px; font-size: 0.9em; border-radius: 6px; width: 100%; color: var(--text-primary);
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+#license-form input[readonly] { background-color: #202020; cursor: not-allowed; opacity: 0.8; }
+#license-form input[type="text"]:focus, #license-form input[type="email"]:focus {
+    background-color: #303030; border-color: var(--input-focus-border); outline: none; box-shadow: 0 0 0 3px var(--brand-orange-glow);
+}
+#license-form small { font-size: 0.75em; margin-top: 0.3em; display: block; color: var(--text-muted);}
+#license-form .agreement-box {
+    margin-top: 1.2em; padding-top: 0.8em; border-top: 1px solid var(--input-border);
+    display: flex; align-items: flex-start;
+}
+#license-form .agreement-box input[type="checkbox"] {
+    transform: scale(1.1); margin-right: 10px; margin-top: 0.2em; flex-shrink: 0; accent-color: var(--brand-orange); cursor: pointer;
+}
+#license-form .agreement-box label { /* Checkbox label */
+    font-size: 0.8em; line-height: 1.45; color: var(--text-secondary); cursor: pointer;
+}
+#license-form .agreement-box label a { color: var(--brand-orange); text-decoration: none; border-bottom: 1px dotted var(--brand-orange);}
+#license-form .agreement-box label a:hover { color: var(--brand-orange-darker); border-bottom-style: solid;}
+
+#license-terms-full {
+    max-height: 120px; border: 1px solid var(--input-border);
+    background: #1c1c1c; border-radius: 4px; padding: 8px 10px;
+    font-size: 0.75em; color: var(--text-secondary); white-space: pre-wrap; font-family: monospace;
+    margin: 0.5em 0 1em 0; overflow-y: auto;
+}
+#license-form .form-actions { margin-top: 1.5em; display: flex; justify-content: center; gap: 12px; flex-wrap: wrap;}
+
+/* License Display Area Styling */
+#license-display-area { margin-top: 1.5em; border-top: 1px solid var(--modal-border); padding-top: 1em;}
+#license-display-area .license-display-title { font-weight: 600; margin-bottom: 0.5em; color: var(--text-secondary); font-size: 0.9em;}
+#license-form textarea#license-text-output {
+    background-color: #1c1c1c; border: 1px solid var(--input-border); color: var(--text-secondary);
+    font-family: monospace; padding: 10px; border-radius: 6px; resize: vertical;
+    width: 100%; font-size: 0.8em; margin-bottom: 0.8em; line-height: 1.5; min-height: 150px;
+}
+.license-copy-action { text-align: center; margin-bottom: 0.5em; }
+#copy-license-btn { display: inline-block; }
+#license-display-area .copy-info { font-size: 0.75em; color: var(--text-muted); margin-top: 0.5em; text-align: center;}
+
+/* Error Message */
+.error-message { color: #ff8080; font-size: 0.85em; margin-top: 0.8em; text-align: center; font-weight: 500;}
+
+/* Ko-fi Widget Style Override (Optional) */
+/* div[id^='kofi-widget-'] iframe { */ /* Add styles if needed */ /* } */
+
+/* Placeholder/Loading Styles - Ensure they are distinct */
+.portfolio-grid p.loading-message {
+    color: var(--text-muted); text-align: center; padding: 40px 20px;
+    font-style: italic; grid-column: 1 / -1; /* Span across grid */
+}
+.swiper-wrapper .swiper-slide.placeholder {
+    display: flex; /* Use flex for placeholder too */
+    justify-content: center; align-items: center;
+    background-color: transparent; border: 1px dashed var(--card-border);
+    box-shadow: none; cursor: default;
+    min-height: 320px; /* Match slide min-height */
+    border-radius: 10px;
+}
+/* .swiper-wrapper .swiper-slide.placeholder .slide-content { height: auto; } */ /* Removed slide-content */
+.swiper-wrapper .swiper-slide.placeholder h4 { /* Adjust placeholder title style if needed */
+    position: static; /* Override absolute positioning */
+    background-color: transparent; border: none;
+    padding: 20px; font-style: italic; color: var(--text-muted);
+    text-align: center; max-width: 100%; overflow: visible;
+    white-space: normal; box-shadow: none;
+    backdrop-filter: none; -webkit-backdrop-filter: none;
+}
+
+/* --- Styling untuk Instagram oEmbed Placeholder --- */
+#modal-video-container.instagram-oembed-placeholder {
+    display: flex; /* Menggunakan flex untuk menengahkan loading/error */
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    /* --- Default Aspect Ratio (misal 1:1 atau 4:5) --- */
+    aspect-ratio: 1 / 1; /* Akan di-override oleh JS nanti */
+    width: min(100%, 540px); /* Lebar maks default Instagram embed */
+    max-width: 100%; /* Pastikan tidak melebihi parent */
+    min-height: 300px; /* Tinggi minimum */
+    margin: 0 auto 1.5em auto; /* Tengahkan dan beri margin bawah */
+    background-color: #181818; /* Background gelap sementara */
+    border: 1px solid var(--modal-border);
+    border-radius: var(--modal-video-radius);
+    overflow: hidden; /* Sembunyikan overflow */
+    position: relative; /* Untuk positioning elemen internal */
+    padding: 20px; /* Padding untuk pesan loading/error */
+    box-sizing: border-box;
+    color: var(--text-muted); /* Warna teks default untuk placeholder */
+    font-size: 0.9em;
+    text-align: center;
+}
+
+/* Styling untuk Konten Embed Setelah Dimuat */
+#modal-video-container.instagram-oembed-placeholder > div {
+    /* Instagram biasanya wrap embed dalam div */
+    width: 100% !important; /* Override inline style jika perlu */
+    min-width: 100% !important;
+}
+
+#modal-video-container.instagram-oembed-placeholder iframe.instagram-media {
+    /* Target iframe spesifik yg dibuat oEmbed jika perlu styling tambahan */
+    position: absolute !important; /* Override inline style jika perlu */
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: none;
+    border-radius: inherit; /* Warisi radius dari container */
+}
+
+/* Styling untuk pesan loading/error di dalam placeholder */
+.oembed-status-message {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    padding: 15px;
+    background: rgba(0,0,0,0.3);
+    border-radius: 5px;
+}
+
+.oembed-error-link {
+    color: var(--brand-orange);
+    text-decoration: underline;
+    font-weight: 500;
+    margin-top: 10px;
+    display: inline-block;
+}
+.oembed-error-link:hover {
+    color: var(--brand-orange-darker);
+    text-decoration: none;
+}
+
+/* Sembunyikan div instagram-media saat loading/error */
+#modal-video-container.loading .instagram-media,
+#modal-video-container.error .instagram-media {
+    display: none;
+}
+
+/* --- ADMIN PAGE SPECIFIC STYLES --- */
+/* Styles specifically for admin.html if needed, using .admin-container */
+body.admin-page { /* Add class="admin-page" to admin.html body tag */
+    background-color: #252525;
+    color: #f0f0f0;
+    padding-bottom: 100px;
+     /* Remove main site's video background */
+     background-image: none;
+}
+/* Remove video background specifically for admin page */
+body.admin-page .video-background-container {
+    display: none;
+}
+.admin-container {
+    max-width: 1000px; margin: 20px auto; padding: 25px;
+    /* Use a distinct admin background */
+    background: rgba(30, 30, 30, 0.9);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: var(--border-radius-cards);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+}
+.admin-section { margin-bottom: 30px; padding-bottom: 20px; border-bottom: 1px solid var(--card-border); }
+.admin-section:last-of-type { border-bottom: none; }
+.admin-container > h1 { color: var(--text-primary); margin-bottom: 0.5em; font-size: 2em; text-align: center; border-bottom: 1px solid var(--card-border); padding-bottom: 0.5em;}
+.admin-container > p { text-align: center; color: var(--text-muted); margin-bottom: 2em; font-size: 0.9em;}
+.admin-section h2 { margin-top: 0; margin-bottom: 15px; color: var(--brand-orange); border-bottom: none; font-size: 1.6em; }
+.admin-section h3 { margin-top: 20px; margin-bottom: 10px; color: var(--text-primary); font-size: 1.2em; border-bottom: 1px solid #444; padding-bottom: 5px;}
+.form-group { margin-bottom: 15px; }
+.form-group label { display: block; margin-bottom: 5px; font-weight: 500; font-size: 0.9em; color: var(--text-secondary); }
+.form-group input[type="text"],
+.form-group input[type="url"],
+.form-group input[type="email"],
+.form-group input[type="number"],
+.form-group textarea,
+.form-group select { /* Styles already defined above, reuse */
+    background-color: var(--input-bg); border: 1px solid var(--input-border);
+    padding: 10px 12px; font-size: 0.9em; border-radius: 6px; width: 100%; color: var(--text-primary);
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+ }
+.form-group textarea { min-height: 150px; font-family: monospace; white-space: pre; line-height: 1.5; }
+.form-group input:focus, .form-group textarea:focus, .form-group select:focus { /* Styles already defined above, reuse */
+    background-color: #303030; border-color: var(--input-focus-border); outline: none; box-shadow: 0 0 0 3px var(--brand-orange-glow);
+ }
+.form-group input[type="checkbox"] { width: auto; margin-right: 8px; transform: scale(1.1); accent-color: var(--brand-orange); vertical-align: middle; cursor: pointer; }
+.form-group label input[type="checkbox"] { display: inline-block; vertical-align: middle; margin-top: -2px; }
+.form-group label > input[type="checkbox"] + span { /* Optional: if you wrap text in a span */
+    vertical-align: middle; cursor: pointer;
+}
+.form-group small { font-size: 0.8em; color: var(--text-muted); display: block; margin-top: 5px; line-height: 1.4; }
+
+/* Style file input button to match others */
+input[type="file"] { color: var(--text-muted); font-size: 0.9em; }
+input[type="file"]::-webkit-file-upload-button,
+input[type="file"]::file-selector-button { /* Standard syntax */
+    display: inline-block; margin: 0 10px 0 0; font-weight: 600; text-decoration: none; font-size: 0.9em;
+    padding: 10px 18px; border: none; border-radius: 8px; transition: all 0.3s ease; cursor: pointer;
+    text-align: center; background-size: 200% auto; line-height: 1.4; vertical-align: middle;
+    background-image: linear-gradient(to right, var(--brand-orange-darker) 0%, var(--brand-orange) 50%, var(--brand-orange-darker) 100%);
+    color: #fff; box-shadow: 0 3px 8px rgba(242, 153, 74, 0.25);
+}
+input[type="file"]::-webkit-file-upload-button:hover,
+input[type="file"]::file-selector-button:hover {
+    background-position: right center; box-shadow: 0 5px 12px var(--brand-orange-glow); transform: translateY(-2px);
+}
+
+button.admin-button { /* Reusing modal button primary style */
+    display: inline-block; margin: 5px; font-weight: 600; text-decoration: none; font-size: 0.9em;
+    padding: 10px 18px; border: none; border-radius: 8px; transition: all 0.3s ease; cursor: pointer;
+    text-align: center; background-size: 200% auto; line-height: 1.4; vertical-align: middle;
+    background-image: linear-gradient(to right, var(--brand-orange-darker) 0%, var(--brand-orange) 50%, var(--brand-orange-darker) 100%);
+    color: #fff; box-shadow: 0 3px 8px rgba(242, 153, 74, 0.25); user-select: none;
+}
+button.admin-button:hover { background-position: right center; box-shadow: 0 5px 12px var(--brand-orange-glow); transform: translateY(-2px); }
+button.admin-button.secondary { /* Reusing modal button secondary style */
+     background-image: none; background-color: #383838; border: 1px solid #4f4f4f; box-shadow: none; color: var(--text-secondary);
+ }
+button.admin-button.secondary:hover { background-color: #454545; border-color: var(--text-secondary); color: var(--text-primary); }
+button.admin-button.danger { background-image: linear-gradient(to right, #e53e3e 0%, #c53030 50%, #e53e3e 100%); box-shadow: 0 3px 8px rgba(229, 62, 62, 0.25); }
+button.admin-button.danger:hover { background-position: right center; box-shadow: 0 5px 12px rgba(229, 62, 62, 0.3); }
+
+.project-list-item { background: rgba(0,0,0,0.2); padding: 15px; border-radius: 8px; margin-bottom: 10px; display: flex; flex-wrap: wrap; gap: 10px; justify-content: space-between; align-items: center; border: 1px solid #444; transition: background-color 0.2s ease; }
+.project-list-item:hover { background: rgba(0,0,0,0.3); }
+.project-list-item span { font-weight: 600; flex-grow: 1; margin-right: 10px; word-break: break-word; } /* Allow text wrap */
+.project-list-item span small { display: block; font-weight: normal; color: var(--text-muted); font-size: 0.85em; margin-top: 3px;}
+.project-list-item div { flex-shrink: 0; } /* Keep buttons together */
+.project-list-item button { font-size: 0.8em; padding: 5px 10px; }
+
+#project-editor { display: none; margin-top: 20px; padding: 25px; background: rgba(0,0,0,0.25); border-radius: 8px; border: 1px solid #404040; }
+#project-editor h3 { margin-top: 0; color: var(--brand-orange); font-size: 1.4em;}
+.image-note { background-color: rgba(242, 153, 74, 0.1); border: 1px solid rgba(242, 153, 74, 0.3); padding: 8px 10px; border-radius: 4px; font-size: 0.85em; color: #f2c9a0; }
+
+.status-message { padding: 12px 15px; border-radius: 6px; margin-top: 20px; text-align: center; font-weight: 500; font-size: 0.9em; }
+.status-success { background-color: rgba(39, 174, 96, 0.3); border: 1px solid rgba(39, 174, 96, 0.5); color: #a7e0b4; }
+.status-error { background-color: rgba(229, 62, 62, 0.2); border: 1px solid rgba(229, 62, 62, 0.4); color: #f8b4b4; }
+
+
+/* --- RESPONSIVE Refinements --- */
+@media (max-width: 1024px) { /* Tablet adjustments */
+    .grid-area-preview .preview-section,
+    .grid-area-main-grid .portfolio-grid {
+         min-height: 400px; /* Adjusted min-height */
+    }
+    .portfolio-grid { grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); }
+    .grid-area-preview .preview-section {
+        min-height: 320px; /* Adjusted for smaller screens */
+        max-height: 420px; /* Adjusted max height */
+    }
+     /* Disable floating preview on tablet and below */
+    .grid-area-preview .preview-section.card-style { /* Select floating specifically */
+        position: static !important; /* Ensure override */
+        max-height: none; /* Remove max-height */
+        overflow: visible; /* Restore overflow */
+    }
+}
+@media (max-width: 768px) { /* Smaller Tablet / Large Mobile */
+    .dashboard-container { --grid-gap: 12px; padding: 12px; }
+    .card-style, .portfolio-grid.card-style { padding: 15px 18px; }
+    /* Ensure portfolio grid padding exists on mobile */
+    .portfolio-grid.card-style { padding: 15px; }
+    .main-header { gap: 10px; }
+    .main-header h1 { font-size: 1.4em;} .main-header .subtitle { font-size: 0.85em;}
+    #site-logo { max-height: 40px; }
+    .button-86, #modal-link, .modal-button, button.admin-button { padding: 9px 15px; font-size: 0.85em; border-radius: 6px;}
+    .portfolio-grid { grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); }
+    .grid-item.card-style img { height: 130px; }
+    .modal-content { padding: 20px 25px; }
+    .modal-content h2 { font-size: 1.3em; }
+    .license-container { gap: 15px; }
+    .license-card { min-width: 220px; }
+    .admin-container { padding: 20px; }
+    .admin-container > h1 { font-size: 1.8em; }
+    .grid-area-preview .preview-section {
+        min-height: 300px; /* Adjusted */
+        max-height: 380px; /* Adjusted */
+    }
+    /* Ensure floating preview is disabled (already covered by max-width: 1024px, but good to be explicit) */
+    /* .preview-section.card-style { ... } */ /* Already handled */
+
+    .preview-container {
+        max-width: 350px; /* Adjust max-width for tablet */
+        min-height: 300px; /* Adjust */
+    }
+     .swiper.preview-swiper, .preview-swiper .swiper-slide, .swiper-wrapper .swiper-slide.placeholder {
+        min-height: 300px; /* Match container */
+    }
+}
+@media (max-width: 576px) { /* Small Mobile */
+    .dashboard-container { --grid-gap: 10px; padding: 10px; }
+    .card-style, .portfolio-grid.card-style { padding: 12px 15px; border-radius: 10px; }
+    /* Ensure portfolio grid padding exists on small mobile */
+    .portfolio-grid.card-style { padding: 12px; }
+    .main-header { flex-direction: column; align-items: flex-start; text-align: left;}
+    .main-header h1 { font-size: 1.3em;} .main-header .subtitle { font-size: 0.8em;}
+    #site-logo { margin-top: 5px; }
+    .button-86, #modal-link, .modal-button, button.admin-button { padding: 8px 14px; font-size: 0.8em; border-radius: 6px;}
+    .home-action-button-container { flex-direction: column; gap: 10px; align-items: stretch;}
+    .button-86 { width: 100%; } /* Stack buttons */
+
+    .preview-container {
+        max-width: 100%;
+        padding: 0 35px; /* Reduced padding for buttons */
+        min-height: 300px; /* Adjust for mobile album size */
+    }
+    .swiper.preview-swiper {
+        width: 100%; /* Let container padding handle spacing */
+        margin: 0.5em auto 1em auto; /* Center swiper */
+        min-height: 300px; /* Match container */
+    }
+    .preview-swiper .swiper-slide {
+         min-height: 300px; /* Match container */
+    }
+    /* .preview-swiper .swiper-slide img { height: 100%; } */ /* Image height is auto now */
+    .preview-container .swiper-slide h4 { font-size: 0.8em; padding: 8px 10px; } /* Smaller title padding */
+    .swiper-button-custom { width: 30px; height: 30px; } .swiper-button-custom svg { width: 16px; height: 16px; }
+    /* Reposition buttons relative to the preview-container */
+    .swiper-button-custom.preview-prev { left: 0px; } /* Position inside padding */
+    .swiper-button-custom.preview-next { right: 0px; } /* Position inside padding */
+
+    .portfolio-grid { grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; padding: 15px; } /* Smaller items */
+    .grid-item.card-style img { height: 110px; } .grid-item.card-style h4 { padding: 10px 12px; font-size: 0.8em;}
+
+    .modal { padding: 10px; }
+    .modal-content { padding: 15px 18px; border-radius: 10px; }
+    .modal-close { top: 8px; right: 8px; width: 30px; height: 30px; font-size: 1.4em; }
+    .modal-content h2 { font-size: 1.2em; }
+    .modal-actions { flex-direction: column; align-items: stretch; gap: 8px; }
+    #modal-link, .modal-actions .button-86, .modal-actions .modal-button { width: 100%; margin: 0; text-align: center; }
+
+    .license-container { flex-direction: column; align-items: center; gap: 12px; }
+    .license-card { width: 100%; max-width: 300px; padding: 12px 15px;} /* Limit width on small screens */
+    #license-apply-modal .modal-content { padding: 15px; } #license-apply-modal h2 { font-size: 1.2em; }
+    #license-form input[type="text"], #license-form input[type="email"] { padding: 9px 10px; font-size: 0.85em; }
+    #license-form .agreement-box label { font-size: 0.75em; }
+    #license-form textarea#license-text-output { font-size: 0.75em; padding: 8px;}
+    #modal-video-container.instagram-embed-container iframe { min-width: 280px; min-height: 280px; max-width: 98%; max-height: 65vh; }
+    .admin-container { padding: 15px; margin: 10px; }
+    .admin-container > h1 { font-size: 1.6em; }
+    .admin-section h2 { font-size: 1.4em; }
+    button.admin-button { width: 100%; margin: 8px 0; } /* Stack admin buttons */
+    .project-list-item { flex-direction: column; align-items: flex-start; }
+    .project-list-item div { width: 100%; display: flex; justify-content: space-between; margin-top: 10px; }
+    .grid-area-preview .preview-section {
+        min-height: 300px; /* Match container */
+        max-height: 360px; /* Adjust */
+    }
+    .swiper-wrapper .swiper-slide.placeholder {
+        min-height: 300px; /* Match slide */
+    }
+}
+
+/* --- Reduced Motion Preferences --- */
+@media (prefers-reduced-motion: reduce) {
+  /* Disable transitions and animations */
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+    transition-delay: 0ms !important;
+  }
+  /* Disable floating preview */
+  .grid-area-preview .preview-section.card-style { /* Select floating specifically */
+    position: static !important;
+  }
+  /* Tone down hover effects */
+   .button-86:hover, .modal-button:hover, button.admin-button:hover {
+       transform: none;
+   }
+   .grid-item.card-style:hover {
+        transform: none;
+   }
+   .swiper-button-custom:hover {
+       transform: translateY(-50%) scale(1.0); /* Reset transform */
+   }
+    .modal-close:hover {
+        transform: rotate(0deg) scale(1.0);
+    }
+    .license-card:hover {
+        transform: none;
+    }
+}
+
+/* END OF FILE: style.css */

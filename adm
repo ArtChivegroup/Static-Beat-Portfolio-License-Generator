@@ -1,0 +1,192 @@
+<!-- START OF FILE: admin.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Artchive Configurator</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- Admin-specific styles are included in style.css -->
+</head>
+<body class="admin-page"> <!-- Add class for specific body styles -->
+    <div class="admin-container">
+        <h1>Admin Configuration</h1>
+        <p>Manage your website settings and content here. Changes are saved to your browser's local storage for this domain. Reload `index.html` to see saved changes.</p>
+
+        <!-- Data Management -->
+        <div class="admin-section">
+            <h2>Data Management</h2>
+            <button id="save-config-btn" class="admin-button">Save Configuration to Browser</button>
+            <button id="export-config-btn" class="admin-button secondary">Export Config (JSON)</button>
+            <button id="reset-config-btn" class="admin-button danger" title="Resets the admin panel to the default content.json values (does not save automatically)">Reset to Default</button> <!-- Added Reset -->
+            <div class="form-group" style="margin-top: 15px;">
+                <label for="import-config-input">Import Config (JSON):</label>
+                <input type="file" id="import-config-input" accept=".json,application/json">
+                <small>Importing will overwrite current settings in this admin panel (you still need to click 'Save Configuration' to persist).</small>
+            </div>
+            <div id="status-message" class="status-message" style="display: none;"></div>
+        </div>
+
+        <!-- General Site Settings -->
+        <div class="admin-section">
+            <h2>General Site Settings</h2>
+            <div class="form-group">
+                <label for="admin-site-title">Site Title (SEO & Header):</label>
+                <input type="text" id="admin-site-title" name="siteSettings.siteTitle" placeholder="e.g., My Beat Store">
+            </div>
+            <div class="form-group">
+                <label for="admin-site-subtitle">Site Subtitle (Header):</label>
+                <input type="text" id="admin-site-subtitle" name="siteSettings.siteSubtitle" placeholder="e.g., High Quality Instrumentals">
+            </div>
+            <div class="form-group">
+                <label for="admin-logo-url">Logo Filename (Optional):</label>
+                <input type="text" id="admin-logo-url" name="siteSettings.logoUrl" placeholder="e.g., logo.png">
+                <small class="image-note">Manually place this file inside the `/img` folder.</small>
+            </div>
+             <div class="form-group">
+                <label for="admin-background-video-id">Background Video (YouTube ID):</label>
+                <input type="text" id="admin-background-video-id" name="siteSettings.backgroundVideoId" placeholder="e.g., eK-27ZaeEbk">
+                 <small>Ensure this video allows embedding and looping. Clear to disable.</small>
+            </div>
+            <div class="form-group">
+                <label for="admin-footer-text">Footer Text:</label>
+                <input type="text" id="admin-footer-text" name="siteSettings.footerText" placeholder="e.g., © {YEAR} My Name. All rights reserved.">
+                <small>Use `{YEAR}` placeholder for the current year.</small>
+            </div>
+        </div>
+
+        <!-- Integrations -->
+        <div class="admin-section">
+            <h2>Integrations</h2>
+            <div class="form-group">
+                <label for="admin-kofi-username">Ko-fi Username:</label>
+                <input type="text" id="admin-kofi-username" name="integrations.kofiUsername" placeholder="e.g., mykofiname">
+                 <small>Used for the floating support widget. Clear to disable.</small>
+            </div>
+            <div class="form-group">
+                <label for="admin-gumroad-url">Gumroad Product URL (for Standard/Premium):</label>
+                <input type="url" id="admin-gumroad-url" name="integrations.gumroadUrl" placeholder="https://username.gumroad.com/l/productcode">
+                 <small>Direct link to your Gumroad product page for non-exclusive licenses. Ensure it includes 'https://'.</small>
+            </div>
+            <div class="form-group">
+                <label for="admin-exclusive-contact-email">Exclusive License Contact Email:</label>
+                <input type="email" id="admin-exclusive-contact-email" name="integrations.exclusiveContactEmail" placeholder="your.email@example.com">
+                <small>Email address used for the 'Contact for Exclusive' button.</small>
+            </div>
+        </div>
+
+        <!-- Free License Template -->
+        <div class="admin-section">
+            <h2>Free License Template</h2>
+            <div class="form-group">
+                <label for="admin-free-license-template">License Text:</label>
+                <textarea id="admin-free-license-template" name="license.freeLicenseTemplate"></textarea>
+                <small>Use placeholders: `{{BEAT_TITLE}}`, `{{USER_NAME}}`, `{{SIGNATURE}}`, `{{DATE}}`. Text formatting (line breaks) will be preserved.</small>
+            </div>
+        </div>
+
+        <!-- Projects -->
+        <div class="admin-section">
+            <h2>Projects / Works</h2>
+            <div id="project-list">
+                <!-- Project items will be listed here by admin.js -->
+                 <p class="loading-message">Loading projects...</p>
+            </div>
+            <button id="add-new-project-btn" class="admin-button" style="margin-top: 15px;">Add New Project</button>
+
+            <!-- Project Editor Form (hidden initially) -->
+            <div id="project-editor" style="display: none;"> <!-- Start hidden -->
+                <h3 id="project-editor-title">Add New Project</h3>
+                <form id="project-form">
+                    <input type="hidden" id="project-id" name="id"> <!-- Hidden field for editing -->
+
+                    <div class="form-group">
+                        <label for="project-title">Title:</label>
+                        <input type="text" id="project-title" name="title" required placeholder="e.g., Sunset Vibes - Lo-fi Beat">
+                         <small>The main title displayed for the project.</small>
+                    </div>
+                    <div class="form-group">
+                        <label for="project-image-url">Thumbnail Filename:</label>
+                        <input type="text" id="project-image-url" name="imageUrl" placeholder="e.g., sunset-vibes.jpg" required>
+                        <small class="image-note">REQUIRED: Enter the exact filename. You must manually place this image file inside the `/img` folder.</small>
+                    </div>
+                     <div class="form-group">
+                        <label for="project-image-alt">Image Alt Text:</label>
+                        <input type="text" id="project-image-alt" name="imageAlt" placeholder="e.g., Visualizer for Sunset Vibes beat">
+                         <small>Important for screen readers and SEO. Describe the image briefly.</small>
+                    </div>
+                    <div class="form-group">
+                        <label for="project-meta">Meta Info (Displayed below description in modal):</label>
+                        <textarea id="project-meta" name="meta" rows="3" placeholder="E.g., Producer: YourName | Genre: Lo-fi | BPM: 85 | Key: C Major"></textarea>
+                         <small>Use pipes `|` or line breaks for separation. Keep it concise.</small>
+                    </div>
+                    <div class="form-group">
+                        <label for="project-description">Description (Displayed in modal):</label>
+                        <textarea id="project-description" name="description" rows="4" placeholder="Details about the project, inspiration, etc..."></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="project-type">Content Type:</label>
+                        <select id="project-type" name="type" required>
+                            <option value="youtube">YouTube Video</option>
+                            <option value="soundcloud">SoundCloud Embed</option>
+                            <option value="spotify">Spotify Embed</option>
+                            <option value="instagram">Instagram Post</option>
+                            <option value="other">Other Link (No Embed)</option>
+                        </select>
+                         <small>Determines how the content is embedded in the modal.</small>
+                    </div>
+                    <!-- YouTube ID Field -->
+                    <div class="form-group project-type-field" id="project-video-id-group" style="display: none;">
+                        <label for="project-video-id">YouTube Video ID:</label>
+                        <input type="text" id="project-video-id" name="videoId" placeholder="e.g., YQXJPL7udj8">
+                        <small>Only the ID from the YouTube URL (e.g., the part after `v=`). Required if Type is YouTube.</small>
+                    </div>
+                     <!-- Spotify/SoundCloud Embed URL Field -->
+                     <div class="form-group project-type-field" id="project-embed-url-group" style="display: none;">
+                        <label for="project-embed-url">Spotify/SoundCloud Embed URL:</label>
+                        <input type="url" id="project-embed-url" name="embedUrl" placeholder="Paste the full embed URL from Share options">
+                        <small>Usually starts with `https://open.spotify.com/embed/...` or `https://w.soundcloud.com/player/...`. Required if Type is Spotify or SoundCloud.</small>
+                    </div>
+                     <!-- Source Link (Universal) -->
+                     <div class="form-group">
+                        <label for="project-link">Source Link (URL):</label>
+                        <input type="url" id="project-link" name="link" required placeholder="https://www.youtube.com/watch?v=...">
+                         <small>Direct link to the content page (YouTube, Instagram, Spotify, SoundCloud, etc.). Used for the 'View Source' button. Required.</small>
+                    </div>
+                     <div class="form-group">
+                        <label for="project-link-text">Source Link Button Text:</label>
+                        <input type="text" id="project-link-text" name="linkText" value="View Source" placeholder="e.g., View on YouTube">
+                         <small>Text displayed on the button linking to the source.</small>
+                    </div>
+                     <!-- Boolean Flags -->
+                     <div class="form-group">
+                        <label>
+                            <input type="checkbox" id="project-is-beat" name="isBeat">
+                            <span>Is this a Beat (Show License Buttons in Modal)?</span>
+                        </label>
+                    </div>
+                    <div class="form-group">
+                        <label>
+                            <input type="checkbox" id="project-in-preview" name="inPreview">
+                             <span>Show in Preview Carousel (Top Section)?</span>
+                        </label>
+                    </div>
+                     <!-- Ordering -->
+                     <div class="form-group">
+                         <label for="project-grid-position">Grid Order (Optional):</label>
+                         <input type="number" id="project-grid-position" name="gridPosition" placeholder="e.g., 1, 2, 3..." min="1">
+                         <small>Controls the display order in the main 'All Works' grid. Lower numbers appear first. Leave blank for default order (added last).</small>
+                     </div>
+
+                    <button type="submit" class="admin-button">Save Project</button>
+                    <button type="button" id="cancel-project-edit-btn" class="admin-button secondary">Cancel</button>
+                </form>
+            </div>
+        </div>
+
+    </div> <!-- End Admin Container -->
+
+    <script src="admin.js"></script>
+</body>
+</html>
+<!-- END OF FILE: admin.html -->

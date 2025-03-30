@@ -1,435 +1,208 @@
+<!-- START OF FILE: index.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Beat/DMZ Artchive - Dark Modern</title>
+    <!-- Title will be set by script.js -->
+    <title id="html-title">Loading...</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
     <link rel="stylesheet" href="style.css">
     <script src="https://gumroad.com/js/gumroad.js"></script>
-    <style>
-        /* Video background as true background */
-        .video-background-container {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
-            z-index: -1; /* Ensure it stays behind all content */
-        }
-
-        .video-background-container iframe {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            object-fit: cover; /* Ensure it covers the entire container */
-            border: none;
-        }
-    </style>
+    <!-- Removed inline style block for video, CSS handles it -->
 </head>
 <body>
+    <!-- Video Background Container - MUST BE OUTSIDE dashboard-container -->
     <div class="video-background-container">
-        <iframe 
-            src="https://www.youtube.com/embed/eK-27ZaeEbk?autoplay=1&mute=1&loop=1&playlist=eK-27ZaeEbk&controls=0&modestbranding=1&rel=0&playsinline=1&start=35&cc_load_policy=0"
+        <iframe
+            id="background-video-iframe"
             allow="autoplay; encrypted-media"
-            allowfullscreen
-            loading="lazy">
+            allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture; fullscreen" 
+            allowfullscreen="allowfullscreen"
+            style="border: none;">
+            <!-- src will be set by script.js -->
         </iframe>
     </div>
 
-<div class="dashboard-container"> <!-- Main Grid Container -->
+    <!-- Main Content Area -->
+    <div class="dashboard-container"> <!-- Main Grid Container -->
 
-    <!-- Area Header -->
-    <div class="grid-area grid-area-header">
-        <header class="main-header card-style">
-            <h1>Beat/DMZ Artchive</h1>
-            <p class="subtitle">Creative Works & Music Production</p>
-        </header>
-    </div>
-
-    <!-- Area Actions -->
-    <div class="grid-area grid-area-actions">
-        <div class="actions-container card-style">
-            <div class="home-action-button-container">
-                 <button id="home-apply-license-btn" class="button-86">Apply for Free License</button>
-                 <button id="home-purchase-license-btn" class="button-86">Purchase a Beat License</button>
-            </div>
-            <p class="small-info home-info">Select a beat below first, or choose a general license type.</p>
-        </div>
-    </div>
-
-    <!-- Area Preview -->
-    <div class="grid-area grid-area-preview">
-        <section class="preview-section card-style">
-            <h2 class="section-title">Preview</h2>
-            <div class="preview-container">
-                <div class="swiper-button-custom preview-prev" id="preview-swipe-prev" aria-label="Previous preview slide">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>
+        <!-- Area Header -->
+        <div class="grid-area grid-area-header">
+            <header class="main-header card-style">
+                <!-- Content set by script.js -->
+                <div class="header-text">
+                    <h1 id="site-title"></h1>
+                    <p class="subtitle" id="site-subtitle"></p>
                 </div>
-                <div class="swiper preview-swiper">
-                    <div class="swiper-wrapper">
-                        <!-- Slides - Ensure data attributes are complete -->
-                        <div class="swiper-slide"
-                             data-title='"Glimmer" - 105BPM Gm (K-Pop/Trap/Rap Beat)'
-                             data-meta='Producer: artchive beat | Genre: K-Pop/Trap/Rap | BPM: 105 | Key: Gm | DAW: FL Studio 21'
-                             data-description="'Glimmer' is a track blending K-Pop, Trap, and Rap elements."
-                             data-type="youtube"
-                             data-video-id="YQXJPL7udj8"
-                             data-link='https://www.youtube.com/watch?v=YQXJPL7udj8'
-                             data-link-text='View on YouTube'
-                             data-is-beat="true">
-                             <div class="slide-content"><img src="img/Untitled 1.png" alt="Glimmer Beat Visualizer"><h4>"Glimmer" Beat</h4></div>
+                <!-- Optional Logo Area -->
+                <img id="site-logo" src="" alt="Site Logo" style="display: none;">
+            </header>
+        </div>
+
+        <!-- Area Actions -->
+        <div class="grid-area grid-area-actions">
+            <div class="actions-container card-style">
+                <div class="home-action-button-container">
+                     <!-- IDs kept for existing functionality -->
+                     <button id="home-apply-license-btn" class="button-86">Apply for Free License</button>
+                     <button id="home-purchase-license-btn" class="button-86">Purchase a Beat License</button>
+                </div>
+                <p class="small-info home-info">Select a beat below first, or choose a general license type.</p>
+            </div>
+        </div>
+
+        <!-- Area Preview -->
+        <div class="grid-area grid-area-preview">
+            <section class="preview-section card-style">
+                <h2 class="section-title">Preview</h2>
+                <div class="preview-container">
+                    <div class="swiper-button-custom preview-prev" id="preview-swipe-prev" aria-label="Previous preview slide">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>
+                    </div>
+                    <div class="swiper preview-swiper">
+                        <!-- Swiper Wrapper - Slides Added by script.js -->
+                        <div class="swiper-wrapper">
+                            <!-- Populated by script.js -->
+                            <div class="swiper-slide placeholder"><div class="slide-content"><h4>Loading Previews...</h4></div></div>
                         </div>
-                        <div class="swiper-slide"
-                             data-title='"Diamonds" - 150BPM Db Major (Trap/Hip-Hop/Rap Beat)'
-                             data-meta='Producer: artchive beat | Genre: Trap/Hip-Hop/Rap | BPM: 150 | Key: Db Major | DAW: Ableton 11'
-                             data-description="'Diamonds' is an energetic track in Db Major."
-                             data-type="youtube"
-                             data-video-id="TaCR_SKgHI4"
-                             data-link='https://www.youtube.com/watch?v=TaCR_SKgHI4'
-                             data-link-text='View on YouTube'
-                             data-is-beat="true">
-                             <div class="slide-content"><img src="img/Untitled 7.png" alt="Diamonds Beat Visualizer"><h4>"Diamonds" Beat</h4></div>
-                        </div>
-                        <div class="swiper-slide"
-                             data-title='UK Garage Beats "Shine" - (Y2K Trend) | BPM: 125'
-                             data-meta='Composer/Producer: Artchive Beat | Genre: UK Garage | BPM: 125 | Y2K Inspired'
-                             data-description="'Shine' is a UK Garage beat inspired by Y2K trends. (Credit 'Prod. by Artchive Beat' for non-profit use). Contact: dimasalmactar12@gmail.com"
-                             data-type="youtube"
-                             data-video-id="Ss4DbGfjswY"
-                             data-link='https://www.youtube.com/watch?v=Ss4DbGfjswY'
-                             data-link-text='View on YouTube'
-                             data-is-beat="true">
-                             <div class="slide-content"><img src="img/PLASTIC.jpg" alt="Shine UK Garage Beat Artwork"><h4>"Shine" UK Garage Beat</h4></div>
-                        </div>
-                        <div class="swiper-slide"
-                             data-title="'Orange Paroh' - Aggressive K-POP Type Beat"
-                             data-meta='Type: K-POP Type Beat | Producer: ArtChive Beat | Style: Aggressive'
-                             data-description="An aggressive K-Pop style beat titled 'Orange Paroh'."
-                             data-type="instagram"
-                             data-link="https://www.instagram.com/p/CxZlem1Jx94/"
-                             data-link-text='View on Instagram'
-                             data-is-beat="true">
-                             <div class="slide-content"><img src="img/Untitled 8.png" alt="Orange Paroh K-Pop Beat Artwork"><h4>"Orange Paroh" K-Pop Beat</h4></div>
-                         </div>
-                        <div class="swiper-slide"
-                             data-title="XG 'Shooting Star Instrumental Remake'"
-                             data-meta='Remake Producer: Artchive beat | Original Artist: XG'
-                             data-description="An instrumental reinterpretation of XG's 'Shooting Star'."
-                             data-type="instagram"
-                             data-link="https://www.instagram.com/p/CvqS3WmLhOO/"
-                             data-link-text='View on Instagram'
-                             data-is-beat="false"> <!-- Explicitly set false -->
-                             <div class="slide-content"><img src="img/Untitled 10.png" alt="XG Shooting Star Remake Artwork"><h4>XG 'Shooting Star' Remake</h4></div>
-                        </div>
-                        <div class="swiper-slide"
-                             data-title="DIMAS HOP EP - SEMESTER DUA (Mixtape) 2020"
-                             data-meta='Artist: Dimas Hop | Type: EP/Mixtape | Release: Oct 3, 2020 | Tracks: 6 | Duration: 17 min'
-                             data-description='Mixtape featuring 6 tracks: "Amnesia Freestyle (feat. DYVV)", "Bubble Freestyle", "Bacot Lo Mahal", "FlexGanG", "Flex Move", "Benar?".'
-                             data-type="spotify"
-                             data-embed-url="https://open.spotify.com/embed/album/4DtW5pa3w1E4nDNfQXVpHk?utm_source=generator&theme=0"
-                             data-link='https://open.spotify.com/album/4DtW5pa3w1E4nDNfQXVpHk?si=x4PKq42UQSe-8amss7nzMg&utm_source=copy-link'
-                             data-link-text='Listen on Spotify'
-                             data-is-beat="false"> <!-- Explicitly set false -->
-                             <div class="slide-content"><img src="img/maxresdefault.jpg" alt="Semester Dua EP Artwork"><h4>EP: Semester Dua</h4></div>
-                        </div>
-                        <!-- Add more slides as needed, ensuring all data attributes are present -->
+                    </div>
+                    <div class="swiper-button-custom preview-next" id="preview-swipe-next" aria-label="Next preview slide">
+                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M8.59 16.59L10 18l6-6-6-6-1.41 1.41L13.17 12z"/></svg>
                     </div>
                 </div>
-                <div class="swiper-button-custom preview-next" id="preview-swipe-next" aria-label="Next preview slide">
-                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M8.59 16.59L10 18l6-6-6-6-1.41 1.41L13.17 12z"/></svg>
-                </div>
-            </div>
-            <p class="small-info swipe-info">Swipe or use buttons</p>
-        </section>
-    </div>
+                <p class="small-info swipe-info">Swipe or use buttons</p>
+            </section>
+        </div>
 
-    <!-- Area Main Grid -->
-    <div class="grid-area grid-area-main-grid">
-        <main class="portfolio-grid">
-             <h2 class="section-title all-works-title">All Works</h2>
-            <!-- Grid items with complete data attributes -->
-            <!-- Glimmer -->
-            <div class="grid-item card-style"
-                 data-title='"Glimmer" - 105BPM Gm (K-Pop/Trap/Rap Beat)'
-                 data-meta='Producer: artchive beat | Genre: K-Pop/Trap/Rap | BPM: 105 | Key: Gm | DAW: FL Studio 21'
-                 data-description="'Glimmer' is a track blending K-Pop, Trap, and Rap elements."
-                 data-type="youtube" data-video-id="YQXJPL7udj8"
-                 data-link='https://www.youtube.com/watch?v=YQXJPL7udj8' data-link-text='View on YouTube' data-is-beat="true">
-                <img src="img/Untitled 1.png" alt="Glimmer Beat Visualizer"> <h4>"Glimmer" Beat</h4>
-            </div>
-            <!-- Diamonds -->
-            <div class="grid-item card-style"
-                 data-title='"Diamonds" - 150BPM Db Major (Trap/Hip-Hop/Rap Beat)'
-                 data-meta='Producer: artchive beat | Genre: Trap/Hip-Hop/Rap | BPM: 150 | Key: Db Major | DAW: Ableton 11'
-                 data-description="'Diamonds' is an energetic track in Db Major."
-                 data-type="youtube" data-video-id="TaCR_SKgHI4"
-                 data-link='https://www.youtube.com/watch?v=TaCR_SKgHI4' data-link-text='View on YouTube' data-is-beat="true">
-                <img src="img/Untitled 7.png" alt="Diamonds Beat Visualizer"> <h4>"Diamonds" Beat</h4>
-            </div>
-             <!-- Shine -->
-             <div class="grid-item card-style"
-                  data-title='UK Garage Beats "Shine" - (Y2K Trend) | BPM: 125'
-                  data-meta='Composer/Producer: Artchive Beat | Genre: UK Garage | BPM: 125 | Y2K Inspired'
-                  data-description="'Shine' is a UK Garage beat inspired by Y2K trends. (Credit 'Prod. by Artchive Beat' for non-profit use). Contact: dimasalmactar12@gmail.com"
-                  data-type="youtube" data-video-id="Ss4DbGfjswY"
-                  data-link='https://www.youtube.com/watch?v=Ss4DbGfjswY' data-link-text='View on YouTube' data-is-beat="true">
-                <img src="img/PLASTIC.jpg" alt="Shine UK Garage Beat Artwork"> <h4>"Shine" UK Garage Beat</h4>
-            </div>
-            <!-- Orange Paroh -->
-             <div class="grid-item card-style"
-                  data-title="'Orange Paroh' - Aggressive K-POP Type Beat"
-                  data-meta='Type: K-POP Type Beat | Producer: ArtChive Beat | Style: Aggressive'
-                  data-description="An aggressive K-Pop style beat titled 'Orange Paroh'."
-                  data-type="instagram" data-link="https://www.instagram.com/p/CxZlem1Jx94/" data-link-text="View on Instagram" data-is-beat="true">
-                <img src="img/Untitled 8.png" alt="Orange Paroh K-Pop Beat Artwork"> <h4>"Orange Paroh" K-Pop Beat</h4>
-            </div>
-            <!-- XG Remake -->
-            <div class="grid-item card-style"
-                 data-title="XG 'Shooting Star Instrumental Remake'"
-                 data-meta='Remake Producer: Artchive beat | Original Artist: XG'
-                 data-description="An instrumental reinterpretation of XG's 'Shooting Star'."
-                 data-type="instagram" data-link="https://www.instagram.com/p/CvqS3WmLhOO/" data-link-text='View on Instagram' data-is-beat="false">
-                <img src="img/Untitled 10.png" alt="XG Shooting Star Remake Artwork"> <h4>XG 'Shooting Star' Remake</h4>
-            </div>
-            <!-- Afgan X Jackson Wang -->
-            <div class="grid-item card-style"
-                 data-title="Afgan X Jackson Wang Type Beat"
-                 data-meta='Producer: ArtChive BEAT | Inspired By: Afgan, Jackson Wang'
-                 data-description="Beat inspired by the styles of Afgan & Jackson Wang."
-                 data-type="instagram" data-link="https://www.instagram.com/p/CoolavYp9Mn/?img_index=1" data-link-text='View on Instagram' data-is-beat="true">
-                <img src="img/Untitled 6.png" alt="Afgan X Jackson Wang Type Beat Artwork"> <h4>Afgan X Jackson Wang Type Beat</h4>
-            </div>
-            <!-- Drake -->
-            <div class="grid-item card-style"
-                 data-title="Drake Type Beat - 140BPM Key D#"
-                 data-meta='Producer: ArtChive BEAT | Inspired By: Drake | BPM: 140 | Key: D#'
-                 data-description="Beat inspired by Drake, produced in D# at 140 BPM."
-                 data-type="instagram" data-link="https://www.instagram.com/p/Coh0JSRpDTx/?img_index=1" data-link-text='View on Instagram' data-is-beat="true">
-                <img src="img/Untitled 4.png" alt="Drake Type Beat Artwork"> <h4>Drake Type Beat</h4>
-            </div>
-             <!-- Khabib -->
-            <div class="grid-item card-style"
-                 data-title='Emotional Piano UK Type Beat "Khabib"'
-                 data-meta='Producer: Almactar Beat / Artchive Beat | Style: UK Beat, Emotional Piano'
-                 data-description='"Khabib" is a UK style beat featuring an emotional piano melody.'
-                 data-type="instagram" data-link="https://www.instagram.com/p/CaxUgK2DlWY/" data-link-text='View on Instagram' data-is-beat="true">
-                <img src="img/Untitled 3.png" alt="Khabib Emotional UK Beat Artwork"> <h4>"Khabib" UK Piano Beat</h4>
-            </div>
-            <!-- Love U2 -->
-            <div class="grid-item card-style"
-                 data-title='R&B Type Beat "Love U2" Chill HipHop'
-                 data-meta='Producer: Almactar Beat / Artchive Beat | Genre: R&B, Chill Hop'
-                 data-description='"Love U2" is a relaxed R&B and chill hip hop style beat.'
-                 data-type="instagram" data-link="https://www.instagram.com/p/B7JdJlTgVTX/" data-link-text='View on Instagram' data-is-beat="true">
-                <img src="img/Untitled 2.png" alt="Love U2 R&B Beat Artwork"> <h4>"Love U2" R&B Beat</h4>
-            </div>
-            <!-- Laputa -->
-            <div class="grid-item card-style"
-                 data-title='GroovyRoom X DPR Live Type Beat "Laputa"'
-                 data-meta='Producer: Almactar Beat / Artchive Beat | Inspired By: GroovyRoom, DPR Live'
-                 data-description='"Laputa" beat, created in a style similar to GroovyRoom and DPR Live.'
-                 data-type="instagram" data-link="https://www.instagram.com/p/B1gJUe7hWws/" data-link-text='View on Instagram' data-is-beat="true">
-                <img src="img/Untitled.png" alt="Laputa GroovyRoom DPR Live Type Beat Artwork"> <h4>"Laputa" Beat</h4>
-            </div>
-            <!-- Groovy Beat -->
-             <div class="grid-item card-style"
-                  data-title='K-Rap Type Beat Dpr Live X Sik-K "Groovy Beat"'
-                  data-meta='Producer: Almactar Beat / Artchive Beat | Style: K-Rap | Inspired By: DPR Live, Sik-K'
-                  data-description='"Groovy Beat" is a K-Rap style beat influenced by DPR Live and Sik-K.'
-                  data-type="instagram" data-link="https://www.instagram.com/p/B1M_m6iHFDH/" data-link-text='View on Instagram' data-is-beat="true">
-                <img src="img/Reelvideo-54373.jpg" alt="Groovy Beat K-Rap Artwork"> <h4>"Groovy Beat" K-Rap</h4>
-            </div>
-            <!-- Bring Me Back -->
-            <div class="grid-item card-style"
-                 data-title="ARTCHIVE DMZ - BRING ME BACK (FREESTYLE) 2021"
-                 data-meta='Artist: ARTCHIVE DMZ | Role: Songwriter/Editor/Director | Year: 2021 | Genre: Hip-Hop/Rap'
-                 data-description="Freestyle performance video for 'Bring Me Back'."
-                 data-type="youtube" data-video-id="EUdELoQ-znE"
-                 data-link='https://www.youtube.com/watch?v=EUdELoQ-znE' data-link-text='Watch on YouTube' data-is-beat="false">
-                <img src="img/Untitled 12.png" alt="Bring Me Back Freestyle Video Thumbnail"> <h4>Bring Me Back (Freestyle)</h4>
-            </div>
-             <!-- No Gang -->
-            <div class="grid-item card-style"
-                 data-title="Dimas Hop - No Gang Freestyle 2021"
-                 data-meta='Artist: Dimas Hop | Role: Songwriter/Editor/Director | Year: 2021 | Genre: Hip-Hop/Rap'
-                 data-description="Freestyle rap video performance of 'No Gang'."
-                 data-type="youtube" data-video-id="iOgxldM6xqE"
-                 data-link='https://www.youtube.com/watch?v=iOgxldM6xqE' data-link-text='Watch on YouTube' data-is-beat="false">
-                <img src="img/Untitled 9.png" alt="No Gang Freestyle Video Thumbnail"> <h4>No Gang Freestyle</h4>
-            </div>
-            <!-- Semester Dua EP -->
-             <div class="grid-item card-style"
-                  data-title="DIMAS HOP EP - SEMESTER DUA (Mixtape) 2020"
-                  data-meta='Artist: Dimas Hop | Type: EP/Mixtape | Release: Oct 3, 2020 | Tracks: 6 | Duration: 17 min'
-                  data-description='Mixtape featuring 6 tracks: "Amnesia Freestyle (feat. DYVV)", "Bubble Freestyle", "Bacot Lo Mahal", "FlexGanG", "Flex Move", "Benar?".'
-                  data-type="spotify" data-embed-url="https://open.spotify.com/embed/album/4DtW5pa3w1E4nDNfQXVpHk?utm_source=generator&theme=0"
-                  data-link='https://open.spotify.com/album/4DtW5pa3w1E4nDNfQXVpHk?si=x4PKq42UQSe-8amss7nzMg&utm_source=copy-link' data-link-text='Listen on Spotify' data-is-beat="false">
-                <img src="img/maxresdefault.jpg" alt="Semester Dua EP Artwork"> <h4>EP: Semester Dua</h4>
-            </div>
-            <!-- Bacod Lo Mahal -->
-             <div class="grid-item card-style"
-                  data-title='(Explicit) Dimas Hop - Bacod Lo Mahal (Music Video) "Freestyle” 2020'
-                  data-meta='Artist: Dimas Hop | Role: Songwriter/Editor/Director | Composer: Almactar Beat | Video: 2020'
-                  data-description="Explicit music video for the freestyle track 'Bacod Lo Mahal'."
-                  data-type="youtube" data-video-id="He3LPx7CjUQ"
-                  data-link='https://youtu.be/He3LPx7CjUQ?si=IGPrf67KQfBTQiiT' data-link-text='Watch on YouTube' data-is-beat="false">
-                <img src="img/hqdefault.jpg" alt="Bacod Lo Mahal Music Video Thumbnail"> <h4>Bacod Lo Mahal (MV)</h4>
-            </div>
-            <!-- 90s Boom Bap -->
-            <div class="grid-item card-style"
-                 data-title="Dimas Hop & D.Y.V.V - 90's Boom Bap (Music Video) 2018"
-                 data-meta='Artists: Dimas Hop, D.Y.V.V. | Role: Editor/Director | Genre: Boom Bap Hip-Hop | Year: 2018'
-                 data-description="Collaboration music video capturing the 90s Boom Bap hip-hop era."
-                 data-type="youtube" data-video-id="4uvm_AHmf74"
-                 data-link='https://youtu.be/4uvm_AHmf74?si=mO4mdx297RRzoLjQ' data-link-text='Watch on YouTube' data-is-beat="false">
-                <img src="img/1697606952-picsay.jpg" alt="90s Boom Bap Music Video Thumbnail"> <h4>90's Boom Bap (MV)</h4>
-            </div>
-            <!-- Street HipHop -->
-             <div class="grid-item card-style"
-                  data-title="DIMAS HOP - Street HipHop ft D.Y.V.V (Music Video) 2017"
-                  data-meta='Artists: Dimas Hop, D.Y.V.V | Role: Director | Genre: Hip-Hop | Year: 2017'
-                  data-description="Music video for the track 'Street HipHop'."
-                  data-type="youtube" data-video-id="o_rHm1yvqeM"
-                  data-link='https://www.youtube.com/watch?v=o_rHm1yvqeM' data-link-text='Watch on YouTube' data-is-beat="false">
-                <img src="img/Rectangle_1.png" alt="Street HipHop Music Video Thumbnail"> <h4>Street HipHop (MV)</h4>
-            </div>
-            <!-- Welcome To My World -->
-            <div class="grid-item card-style"
-                 data-title="Dimas Hop – Welcome To my World ft D.Y.V.V & Wibu$ex (audio) 2017"
-                 data-meta='Artists: Dimas Hop, D.Y.V.V, Wibu$ex | Genre: Hip-Hop | Year: 2017'
-                 data-description='Audio track "Welcome To my World" featuring collaborations.'
-                 data-type="soundcloud" data-embed-url="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/526850376&color=%23FFA500&auto_play=false&hide_related=true&show_comments=false&show_user=true&show_reposts=false&show_teaser=false&visual=false" data-height="166"
-                 data-link='https://soundcloud.com/dimashop7/dima-hop-welcome-to-my-world?utm_source=clipboard&utm_medium=text&utm_campaign=social_sharing' data-link-text='Listen on SoundCloud' data-is-beat="false">
-                <img src="img/Untitled 5.png" alt="Welcome To my World Audio Artwork"> <h4>Welcome To My World (Audio)</h4>
-            </div>
-            <!-- Semester Satu EP -->
-            <div class="grid-item card-style"
-                 data-title="Dimas Hop EP: Semester Satu (2016-2018)"
-                 data-meta='Artist: Dimas Hop | Type: EP | Released: Aug 18, 2020 (Recorded 2016-2018) | Tracks: 6 | Duration: 21 min'
-                 data-description='Debut EP "Semester Satu" collecting tracks from 2016-2018. Tracklist includes: Welcome to My World (Remix), Sukabumi City (Remix), Exstra$kill, Street Hip-hop (Remix), 90’s BoomBap, Memulai (Remix Rolling Stone)'
-                 data-type="soundcloud" data-embed-url="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/playlists/640001919&color=%23FFA500&auto_play=false&hide_related=true&show_comments=false&show_user=true&show_reposts=false&show_teaser=false&visual=false" data-height="380"
-                 data-link='https://soundcloud.com/dimashop7/sets/semester1?utm_source=clipboard&utm_medium=text&utm_campaign=social_sharing' data-link-text='Listen on SoundCloud' data-is-beat="false">
-                <img src="img/Untitled 11.png" alt="Semester Satu EP Artwork"> <h4>EP: Semester Satu</h4>
-            </div>
-        </main>
-    </div>
+        <!-- Area Main Grid -->
+        <div class="grid-area grid-area-main-grid">
+             <main class="portfolio-grid card-style"> <!-- Added card-style here -->
+                 <h2 class="section-title all-works-title">All Works</h2>
+                 <!-- Grid items will be injected here by script.js -->
+                 <p class="loading-message">Loading works...</p>
+             </main>
+        </div>
 
-    <!-- Area Footer -->
-    <div class="grid-area grid-area-footer">
-        <footer>
-            <p>© <span id="currentYear"></span> Moch Dimas Almahtar. All rights reserved.</p>
-        </footer>
-    </div>
+        <!-- Area Footer -->
+        <div class="grid-area grid-area-footer">
+            <footer>
+                <!-- Content set by script.js -->
+                <p id="footer-content"></p>
+            </footer>
+        </div>
 
-</div> <!-- End dashboard-container -->
+    </div> <!-- End dashboard-container -->
 
 
-<!-- Modals -->
-<!-- Portfolio Modal -->
-<div id="portfolio-modal" class="modal">
-    <div class="modal-overlay"></div>
-    <div class="modal-content">
-        <button class="modal-close" aria-label="Close modal">×</button>
-        <h2 id="modal-title"></h2>
-        <div class="modal-body">
-            <div id="modal-video-container" style="display: none;"></div>
-            <div id="modal-details">
-                <p id="modal-description"></p>
-                <div id="modal-meta"></div>
-                <div class="modal-actions">
-                    <a id="modal-link" href="#" target="_blank" rel="noopener noreferrer" class="modal-button secondary">View Source</a>
-                    <button id="apply-license-btn" class="button-86" style="display: none;">Apply Free License</button>
-                    <button id="purchase-license-btn" class="button-86" style="display: none;">Purchase License</button>
+    <!-- Modals (Structure remains largely the same) -->
+    <!-- Portfolio Modal -->
+    <div id="portfolio-modal" class="modal">
+        <div class="modal-overlay"></div>
+        <div class="modal-content">
+            <button class="modal-close" aria-label="Close modal">×</button>
+            <h2 id="modal-title"></h2>
+            <div class="modal-body">
+                <div id="modal-video-container" style="display: none;"></div>
+                <div id="modal-details">
+                    <p id="modal-description"></p>
+                    <div id="modal-meta"></div>
+                    <div class="modal-actions">
+                        <a id="modal-link" href="#" target="_blank" rel="noopener noreferrer" class="modal-button secondary">View Source</a>
+                        <button id="modal-apply-license-btn" class="button-86" style="display: none;">Apply Free License</button>
+                        <button id="modal-purchase-license-btn" class="button-86" style="display: none;">Purchase License</button>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
 
-<!-- License Application Modal (Free) -->
-<div id="license-apply-modal" class="modal">
-      <div class="modal-overlay"></div>
-        <div class="modal-content license-form-content">
-            <button class="modal-close" aria-label="Close modal">×</button>
-            <h2>Apply for Free License</h2>
-            <form id="license-form">
-                <div class="form-group">
-                    <label for="license-beat-title">Beat Title:</label>
-                    <input type="text" id="license-beat-title" name="beat-title" placeholder="Enter the exact beat title" required>
-                </div>
-                <div class="form-group">
-                    <label for="license-user-name">Your Full Name (Licensee):</label>
-                     <input type="text" id="license-user-name" name="user-name" placeholder="e.g., John Doe" required>
-                 </div>
-                <div class="form-group">
-                    <label for="license-signature">Digital Signature:</label>
-                    <input type="text" id="license-signature" name="signature" placeholder="Type your full name again to agree" required>
-                    <small>By typing your name, you agree to the Free License terms.</small>
-                </div>
-                <div class="form-group agreement-box">
-                    <input type="checkbox" id="license-agreement-check" name="agreement" required>
-                    <label for="license-agreement-check">I have read and agree to the <a href="#view-terms" id="view-license-terms-link">Free License Terms</a>.</label>
-                </div>
-                <div id="license-terms-full" style="display: none; max-height: 150px; overflow-y: auto; border: 1px solid var(--input-border); padding: 10px; margin-bottom: 1em; font-size: 0.85em; background: rgba(0,0,0,0.2);">
-                    <!-- Populated by JS -->
-                </div>
-                <div class="form-actions">
-                    <!-- Step 1 Button -->
-                    <button type="submit" id="generate-license-btn" class="modal-button primary">Validate & Prepare</button>
-                    <!-- Step 2 Button - Initially Hidden -->
-                    <button type="button" id="download-license-btn" class="modal-button secondary" style="display: none;">Generate & Download License</button>
-                </div>
-                <p id="license-form-error" class="error-message" style="display: none;"></p>
-
-                <!-- Area Tampilan Lisensi (from system version) -->
-                <div id="license-display-area" style="display: none;">
-                     <p class="license-display-title">License Generated:</p>
-                     <textarea id="license-text-output" rows="10" readonly></textarea>
-                     <div class="license-copy-action">
-                        <button type="button" id="copy-license-btn" class="modal-button secondary small">Copy License Text</button>
+    <!-- License Application Modal (Free) -->
+    <div id="license-apply-modal" class="modal">
+          <div class="modal-overlay"></div>
+            <div class="modal-content license-form-content">
+                <button class="modal-close" aria-label="Close modal">×</button>
+                <h2>Apply for Free License</h2>
+                <form id="license-form">
+                     <div class="form-group">
+                        <label for="license-beat-title">Beat Title:</label>
+                        <input type="text" id="license-beat-title" name="beat-title" placeholder="Enter the exact beat title" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="license-user-name">Your Full Name (Licensee):</label>
+                         <input type="text" id="license-user-name" name="user-name" placeholder="e.g., John Doe" required>
                      </div>
-                     <p class="small-info copy-info">You can copy the text above. File download has been attempted.</p>
-                </div>
-            </form>
-        </div>
-</div>
-
-<!-- Purchase Options Modal -->
-<div id="purchase-options-modal" class="modal">
-       <div class="modal-overlay"></div>
-        <div class="modal-content purchase-modal-content">
-            <button class="modal-close" aria-label="Close modal">×</button>
-            <h2 id="purchase-modal-title">Choose Your Beat License</h2>
-            <p id="purchase-beat-info" style="display: none; font-style: italic; color: var(--text-secondary); margin-bottom: 1.5em; text-align: center;"></p>
-            <div class="license-container">
-                <div class="license-card" onclick="openGumroad('standard')"> <h3>Standard License</h3> <p class="price"><strong>$29</strong></p> <ul class="features"> <li>MP3 + WAV Files</li> <li>Sell up to 2,000 copies</li> <li>Up to 500,000 streams</li> <li>Music Videos: 1</li> <li>Non-Exclusive</li> <li>Must Credit: (Prod. Artchive Beat)</li> </ul> <button class="modal-button purchase small">Select Standard</button> </div>
-                <div class="license-card" onclick="openGumroad('premium')"> <h3>Premium License</h3> <p class="price"><strong>$79</strong></p> <ul class="features"> <li>MP3 + WAV + Stems</li> <li>Sell up to 10,000 copies</li> <li>Up to 5,000,000 streams</li> <li>Music Videos: Unlimited</li> <li>Non-Exclusive</li> <li>Must Credit: (Prod. Artchive Beat)</li> </ul> <button class="modal-button purchase small">Select Premium</button> </div>
-                <div class="license-card" onclick="openGumroad('exclusive')"> <h3>Exclusive License</h3> <p class="price"><strong>$299+</strong> <span class="negotiable">(Negotiable)</span></p> <ul class="features"> <li>MP3 + WAV + Stems</li> <li>Sell Unlimited copies</li> <li>Unlimited streams</li> <li>Music Videos: Unlimited</li> <li>Exclusive Rights</li> <li>Contact for details</li> </ul> <button class="modal-button purchase small">Contact for Exclusive</button> </div>
+                    <div class="form-group">
+                        <label for="license-signature">Digital Signature:</label>
+                        <input type="text" id="license-signature" name="signature" placeholder="Type your full name again to agree" required>
+                        <small>By typing your name, you agree to the Free License terms.</small>
+                    </div>
+                    <div class="form-group agreement-box">
+                        <input type="checkbox" id="license-agreement-check" name="agreement" required>
+                        <label for="license-agreement-check">I have read and agree to the <a href="#view-terms" id="view-license-terms-link">Free License Terms</a>.</label>
+                    </div>
+                    <div id="license-terms-full" style="display: none;">
+                        <!-- Populated by script.js -->
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" id="generate-license-btn" class="modal-button primary">Validate & Prepare</button>
+                        <button type="button" id="download-license-btn" class="modal-button secondary" style="display: none;">Generate & Download License</button>
+                    </div>
+                    <p id="license-form-error" class="error-message" style="display: none;"></p>
+                    <div id="license-display-area" style="display: none;">
+                         <p class="license-display-title">License Generated:</p>
+                         <textarea id="license-text-output" rows="10" readonly></textarea>
+                         <div class="license-copy-action">
+                            <button type="button" id="copy-license-btn" class="modal-button secondary small">Copy License Text</button>
+                         </div>
+                         <p class="small-info copy-info">You can copy the text above. File download has been attempted.</p>
+                    </div>
+                </form>
             </div>
-             <p class="small-info purchase-footer-info">Clicking a license option will take you to Gumroad (or prompt contact for Exclusive).</p>
-        </div>
+    </div>
+	
+	<!-- Inside Portfolio Modal -->
+<div class="modal-actions">
+    <a id="modal-link" href="#" target="_blank" rel="noopener noreferrer" class="modal-button secondary">View Source</a>
+    <!-- CORRECT IDs -->
+    <button id="modal-apply-license-btn" class="button-86" style="display: none;">Apply Free License</button>
+    <button id="modal-purchase-license-btn" class="button-86" style="display: none;">Purchase License</button>
 </div>
 
-<!-- Ko-fi Widget -->
-<script src='https://storage.ko-fi.com/cdn/scripts/overlay-widget.js'></script>
-<script>
-  kofiWidgetOverlay.draw('dmzartchive', {
-    'type': 'floating-chat',
-    'floating-chat.donateButton.text': 'Support me',
-    'floating-chat.donateButton.background-color': '#ff5e5b', /* Kofi Red */
-    'floating-chat.donateButton.text-color': '#fff'
-  });
-</script>
+    <!-- Purchase Options Modal -->
+    <div id="purchase-options-modal" class="modal">
+           <div class="modal-overlay"></div>
+            <div class="modal-content purchase-modal-content">
+                <button class="modal-close" aria-label="Close modal">×</button>
+                <h2 id="purchase-modal-title">Choose Your Beat License</h2>
+                <p id="purchase-beat-info" style="display: none;"></p>
+                <div class="license-container">
+                    <!-- Cards remain structurally same, content can be adjusted in CSS if needed or kept static -->
+                    <div class="license-card" data-license-type="standard">
+                         <h3>Standard License</h3> <p class="price"><strong>$29</strong></p> <ul class="features"> <li>MP3 + WAV Files</li> <li>Sell up to 2,000 copies</li> <li>Up to 500,000 streams</li> <li>Music Videos: 1</li> <li>Non-Exclusive</li> <li>Must Credit: (Prod. Artchive Beat)</li> </ul> <button class="modal-button purchase small">Select Standard</button>
+                    </div>
+                    <div class="license-card" data-license-type="premium">
+                         <h3>Premium License</h3> <p class="price"><strong>$79</strong></p> <ul class="features"> <li>MP3 + WAV + Stems</li> <li>Sell up to 10,000 copies</li> <li>Up to 5,000,000 streams</li> <li>Music Videos: Unlimited</li> <li>Non-Exclusive</li> <li>Must Credit: (Prod. Artchive Beat)</li> </ul> <button class="modal-button purchase small">Select Premium</button>
+                    </div>
+                    <div class="license-card" data-license-type="exclusive">
+                        <h3>Exclusive License</h3> <p class="price"><strong>$299+</strong> <span class="negotiable">(Negotiable)</span></p> <ul class="features"> <li>MP3 + WAV + Stems</li> <li>Sell Unlimited copies</li> <li>Unlimited streams</li> <li>Music Videos: Unlimited</li> <li>Exclusive Rights</li> <li>Contact for details</li> </ul> <button class="modal-button purchase small">Contact for Exclusive</button>
+                     </div>
+                </div>
+                 <p class="small-info purchase-footer-info">Clicking a license option will take you to Gumroad (or prompt contact for Exclusive).</p>
+            </div>
+    </div>
 
-<!-- Scripts -->
-<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
-<script src="script.js"></script>
-<script>
-    document.getElementById('currentYear').textContent = new Date().getFullYear();
-</script>
+    <!-- Ko-fi Widget Container (script.js will initialize it) -->
+    <div id="kofi-widget-container"></div>
+    <!-- Ko-fi Overlay Script -->
+    <script src='https://storage.ko-fi.com/cdn/scripts/overlay-widget.js'></script>
+
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+    <!-- Main script modified to load data -->
+    <script src="script.js"></script>
+
 </body>
 </html>
+<!-- END OF FILE: index.html -->

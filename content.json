@@ -1,0 +1,54 @@
+{
+  "siteSettings": {
+    "siteTitle": "Beat/DMZ Artchive",
+    "siteSubtitle": "Creative Works & Music Production",
+    "logoUrl": "",
+    "backgroundVideoId": "eK-27ZaeEbk",
+    "footerText": "© {YEAR} Moch Dimas Almahtar. All rights reserved."
+  },
+  "integrations": {
+    "kofiUsername": "dmzartchive",
+    "gumroadUrl": "https://dimasalmactar.gumroad.com/l/utalaj",
+    "exclusiveContactEmail": "dimasalmactar12@gmail.com"
+  },
+  "license": {
+    "freeLicenseTemplate": "FREE LICENSE AGREEMENT\n\nBeat Title: {{BEAT_TITLE}}\nProducer: Artchive Beat / Moch Dimas Almahtar\nLicensee: {{USER_NAME}}\n\nThis Free License Agreement (\"Agreement\") is made between the Producer and the Licensee (\"User\"), granting permission to use the beat under the following terms:\n\n1. GRANT OF LICENSE\nThe Producer grants the User a non-exclusive, non-transferable, royalty-free license to use the beat for:\n- Uploading on YouTube or other video platforms (maximum 10,000 views/listeners).\n- Uploading on Digital Streaming Platforms (DSPs) such as Spotify, Apple Music, etc. (maximum 10,000 streams/listeners).\n- Non-commercial projects (e.g., demos, mixtapes, personal projects).\n\n2. RESTRICTIONS\n- This license does not grant ownership or exclusive rights to the beat.\n- The User must not register the beat or song using the beat for Content ID, copyright claims, or publishing rights.\n- The User cannot resell, sublicense, or redistribute the beat in any form.\n- Modifications to the beat do not grant additional rights beyond this license.\n\n3. LICENSE EXPIRATION\nOnce the total views/listens exceed 10,000, this Free License will automatically expire. The User must contact the Producer to negotiate and renew the license. Continued use beyond the limit without renewal violates this Agreement.\n\n4. CREDITS & ATTRIBUTION\nThe User must credit the Producer as follows:\n\n  Produced by Artchive Beat / Moch Dimas Almahtar\n\nThis credit must appear in the song description, metadata, and/or wherever applicable.\n\n5. TERMINATION\nThis Agreement will be terminated immediately if the User:\n- Breaches any terms stated above.\n- Fails to renew the license after exceeding the allowed usage.\n\nThe Producer reserves the right to revoke this license at any time if terms are violated.\n\n---\nAGREEMENT & SIGNATURE\n\nBy downloading and using this beat, the Licensee ({{USER_NAME}}) acknowledges they have read, understood, and agreed to all terms and conditions of this Free License Agreement.\n\nDigital Signature: {{SIGNATURE}}\nDate: {{DATE}}\n\n---\nArtchive Beat / Moch Dimas Almahtar\nContact for Licensing & Renewal: dimasalmactar12@gmail.com\nInstagram: @dmz.artchive or @beat.artchive\n"
+  },
+  "projects": [
+    {
+      "id": "proj_1",
+      "gridPosition": 1,
+      "inPreview": true,
+      "title": "Sample Project 1",
+      "imageUrl": "sample1.png",
+      "imageAlt": "Sample Project 1 Thumbnail",
+      "description": "Description for Sample Project 1",
+      "type": "youtube",
+      "videoId": "dQw4w9WgXcQ",
+      "link": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+      "linkText": "View on YouTube"
+    },
+    {
+      "id": "proj_2",
+      "gridPosition": 2,
+      "inPreview": false,
+      "title": "Sample Project 2",
+      "imageUrl": "sample2.png",
+      "imageAlt": "Sample Project 2 Thumbnail",
+      "description": "Description for Sample Project 2",
+      "type": "other",
+      "link": "https://example.com",
+      "linkText": "View Details"
+    },
+    {
+      "id": "insta-project-1",
+      "title": "Reel Keren di Instagram",
+      "thumbnail": "images/thumb-insta-1.jpg",
+      "type": "instagram",
+      "link": "https://www.instagram.com/p/Cxxxxxxxxxx/",
+      "description": "Deskripsi singkat tentang reel ini.",
+      "tags": ["instagram", "reel", "video pendek"],
+      "date": "2023-10-27"
+    }
+  ]
+}
